@@ -1,4 +1,4 @@
-package com.example.swap.ui.theme
+package com.m1zetzDev.swap.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.example.swap
+package com.m1zetzDev.swap
 
 import org.junit.Test
 

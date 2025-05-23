@@ -2,14 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.gms)
 }
 
 android {
-    namespace = "com.example.swap"
-    compileSdk = 34
+    namespace = "com.m1zetzDev.swap"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.swap"
+        applicationId = "com.m1zetzDev.swap"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -40,8 +41,10 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.androidx.navigation.compose)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.firebase.auth)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

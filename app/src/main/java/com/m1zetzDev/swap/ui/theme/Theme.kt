@@ -1,5 +1,4 @@
-package com.example.swap.ui.theme
-
+package com.m1zetzDev.swap.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

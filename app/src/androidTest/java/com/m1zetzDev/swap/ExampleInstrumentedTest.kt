@@ -1,4 +1,4 @@
-package com.example.swap
+package com.m1zetzDev.swap
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

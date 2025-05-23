@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "842223519579",
+    "project_id": "swapdb-85cd5",
+    "storage_bucket": "swapdb-85cd5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842223519579:android:35d152aaa177cb4ad97c7e",
+        "android_client_info": {
+          "package_name": "com.m1zetzDev.swap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkEbHYTlLBgCUkQNrVq0FXfxnl1O5dGUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
