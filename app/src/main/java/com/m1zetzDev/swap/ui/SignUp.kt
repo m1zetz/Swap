@@ -24,6 +24,8 @@ import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,50 +43,44 @@ import com.m1zetzDev.swap.ui.theme.whiteOrange
 import com.m1zetzDev.swap.ui.theme.whiteRed
 
 @Composable
-fun ScreenSignUp(toScreen1: () -> Unit){
+fun ScreenSignUp(toScreen1: () -> Unit) {
 
-    Box(modifier = Modifier.background(brush = Brush.verticalGradient(colors = listOf(
-        backgroundColorPurple1, backgroundColorPurple2
-    )))){
-
-        Column(verticalArrangement = Arrangement.Top,
-            modifier = Modifier.padding(top = 80.dp),
-            ){
-
-            Text("SWAP", fontSize = 165.sp,
-                color = whiteForText,
-                fontWeight = FontWeight.Bold,
-                softWrap = false,
-//                style = TextStyle(brush = Brush.horizontalGradient(colors = listOf(
-//                    whiteForText, whiteRed)))
-
-            )
-            Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxSize()){
-                Image(
-                    bitmap = ImageBitmap.imageResource(R.drawable.registration_image),
-                    contentDescription = "",
-                    modifier = Modifier.padding(start = 25.dp)
+    Box(
+        modifier = Modifier.background(
+            brush = Brush.verticalGradient(
+                colors = listOf(
+                    backgroundColorPurple1, backgroundColorPurple2
                 )
-            }
-        }
+            )
+        ).padding(80.dp).fillMaxSize()
+    ) {
 
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
+            Image(
+                bitmap = ImageBitmap.imageResource(R.drawable.registration),
+                contentDescription = "",
+                modifier = Modifier.padding(start = 25.dp)
+            )
 
+            Column(verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
 
+                Text(
+                    "Welcome! Register in our application.",
+                    color = Color.White,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(bottom = 140.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom,
-        ){
+                val auth = Firebase.auth
 
-            Text("Welcome! Register in our application.", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
-
-            val auth = Firebase.auth
-
-            val messageEmail = remember { mutableStateOf("") }
-            val messagePassword = remember { mutableStateOf("") }
-            val messageName = remember { mutableStateOf("") }
+                val messageEmail = remember { mutableStateOf("") }
+                val messagePassword = remember { mutableStateOf("") }
+                val messageName = remember { mutableStateOf("") }
 
 //            TextField(value = messageEmail.value,
 //                onValueChange = {messageName.value = it},
@@ -99,57 +95,74 @@ fun ScreenSignUp(toScreen1: () -> Unit){
 //                shape = RoundedCornerShape(25.dp)
 //            )
 
-            TextField(value = messageEmail.value,
-                onValueChange = {messageEmail.value = it},
-                Modifier.padding(vertical = 15.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White
-                ),
-                label = { Text("Enter email", color = backgroundColorPurple1,) },
-                shape = RoundedCornerShape(25.dp)
-            )
+                TextField(
+                    value = messageEmail.value,
+                    onValueChange = { messageEmail.value = it },
+                    Modifier.padding(vertical = 15.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White
+                    ),
+                    label = { Text("Enter email", color = backgroundColorPurple1,) },
+                    shape = RoundedCornerShape(25.dp)
+                )
 
 
-            TextField(value = messagePassword.value,
-                onValueChange = {messagePassword.value = it},
-                Modifier.padding(vertical = 15.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White
-                ),
-                label = { Text("Enter password", color = backgroundColorPurple1) },
-                shape = RoundedCornerShape(25.dp)
-            )
+                TextField(
+                    value = messagePassword.value,
+                    onValueChange = { messagePassword.value = it },
+                    Modifier.padding(vertical = 15.dp),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White
+                    ),
+                    label = { Text("Enter password", color = backgroundColorPurple1) },
+                    shape = RoundedCornerShape(25.dp)
+                )
 
 
-            Button(onClick = { signUp(auth, messageEmail.value, messagePassword.value) }, colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color(0xff222222)
-            ),)
-            {
-                Text("Sign Up",textAlign = TextAlign.Center, color = backgroundColorPurple1)
-            }
+                Button(
+                    onClick = { signUp(auth, messageEmail.value, messagePassword.value) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xff222222)
+                    ),
+                )
+                {
+                    Text("Sign Up", textAlign = TextAlign.Center, color = backgroundColorPurple1)
+                }
 
-            Button(onClick = {
-                toScreen1()
-            }, colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color(0xff222222)
-            ))
-            {
-                Text("Back to Sign In",textAlign = TextAlign.Center, color = backgroundColorPurple1)
-            }
+                Button(
+                    onClick = {
+                        toScreen1()
+                    }, colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xff222222)
+                    )
+                )
+                {
+                    Text(
+                        "Back to Sign In",
+                        textAlign = TextAlign.Center,
+                        color = backgroundColorPurple1
+                    )
+                }
+        }
+
+
+
 
 
         }
 
     }
 }
+
+
 
 
 private fun signUp(firebaseAuth: FirebaseAuth, email: String, password: String){
