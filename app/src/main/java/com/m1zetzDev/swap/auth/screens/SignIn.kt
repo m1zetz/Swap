@@ -1,18 +1,12 @@
-package com.m1zetzDev.swap.ui
+package com.m1zetzDev.swap.auth.screens
 
-import android.app.Activity
 import android.util.Log
-import android.webkit.WebSettings.TextSize
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -30,10 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -41,12 +35,9 @@ import com.google.firebase.auth.auth
 import com.m1zetzDev.swap.R
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple2
-import com.m1zetzDev.swap.ui.theme.whiteForText
-import com.m1zetzDev.swap.ui.theme.whiteOrange
-import com.m1zetzDev.swap.ui.theme.whiteRed
 
 @Composable
-fun ScreenSignIn(toScreen2: () -> Unit){
+fun ScreenSignIn(toSignUp: () -> Unit , onLogin: (email: String, password: String) -> Unit){
 
     Box(modifier = Modifier.fillMaxSize().background(brush = Brush.verticalGradient(colors = listOf(
         backgroundColorPurple1, backgroundColorPurple2
@@ -62,7 +53,8 @@ fun ScreenSignIn(toScreen2: () -> Unit){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()) {
 
-                Text("Welcome!",
+                Text(
+                    stringResource(R.string.welcome),
                     color = Color.White,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
@@ -101,7 +93,7 @@ fun ScreenSignIn(toScreen2: () -> Unit){
                 )
 
 
-                Button(onClick = { signIn(auth, messageEmail.value, messagePassword.value) }, colors = ButtonDefaults.buttonColors(
+                Button(onClick = { onLogin(messageEmail.value, messagePassword.value) }, colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color(0xff222222)
                 ),)
@@ -110,7 +102,7 @@ fun ScreenSignIn(toScreen2: () -> Unit){
                 }
 
                 Button(onClick = {
-                    toScreen2()
+                    toSignUp()
                 }, colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = Color(0xff222222)
@@ -123,17 +115,6 @@ fun ScreenSignIn(toScreen2: () -> Unit){
         }
 
 
-    }
-}
-
-
-private fun signIn(firebaseAuth: FirebaseAuth, email: String, password: String){
-    firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener{
-        if(it.isSuccessful){
-            Log.d("MyLog", "Sign In is Successful!")
-        } else{
-            Log.d("MyLog", "Sign In is Failed!")
-        }
     }
 }
 
