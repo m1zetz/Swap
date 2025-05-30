@@ -17,7 +17,7 @@ import com.m1zetzDev.swap.auth.screens.ScreenSignUp
 import com.m1zetzDev.swap.mainAppButNav.AppBottomNavigation
 
 
-class MainActivity : ComponentActivity() {
+class Navigation : ComponentActivity() {
     @SuppressLint("ViewModelConstructorInComposable")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(
                 navController = navController,
-                startDestination = "screen_sign_in"
+                startDestination = "main_window_screen"
             ) {
                 composable("screen_sign_in") {
 

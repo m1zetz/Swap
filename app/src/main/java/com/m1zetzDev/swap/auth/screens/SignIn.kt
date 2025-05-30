@@ -35,27 +35,46 @@ import com.google.firebase.auth.auth
 import com.m1zetzDev.swap.R
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple2
+import com.m1zetzDev.swap.ui.theme.whiteForUi
 
 @Composable
-fun ScreenSignIn(toSignUp: () -> Unit , onLogin: (email: String, password: String) -> Unit){
+fun ScreenSignIn(toSignUp: () -> Unit, onLogin: (email: String, password: String) -> Unit) {
 
-    Box(modifier = Modifier.fillMaxSize().background(brush = Brush.verticalGradient(colors = listOf(
-        backgroundColorPurple1, backgroundColorPurple2
-    )))){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        backgroundColorPurple1, backgroundColorPurple2
+                    )
+                )
+            )
+    ) {
 
-        Column(modifier = Modifier.fillMaxSize().padding(top = 80.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 80.dp)
+        ) {
 
-            Image(bitmap = ImageBitmap.imageResource(R.drawable.swap_your_life),
+            Image(
+                bitmap = ImageBitmap.imageResource(
+                    R.drawable.swap_your_life
+                ),
                 contentDescription = "",
-                contentScale = ContentScale.Fit)
+                contentScale = ContentScale.Fit
+            )
 
-            Column(verticalArrangement = Arrangement.Center,
+            Column(
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()) {
+                modifier = Modifier.fillMaxSize()
+            ) {
 
                 Text(
                     stringResource(R.string.welcome),
-                    color = Color.White,
+                    color = whiteForUi,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
                 )
@@ -65,50 +84,77 @@ fun ScreenSignIn(toSignUp: () -> Unit , onLogin: (email: String, password: Strin
                 val messageEmail = remember { mutableStateOf("") }
                 val messagePassword = remember { mutableStateOf("") }
 
-                TextField(value = messageEmail.value,
-                    onValueChange = {messageEmail.value = it},
+                TextField(
+                    value = messageEmail.value,
+                    onValueChange = { messageEmail.value = it },
                     Modifier.padding(vertical = 15.dp),
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedContainerColor = whiteForUi,
+                        focusedContainerColor = whiteForUi
                     ),
-                    label = { Text("Enter email", color = backgroundColorPurple1, fontWeight = FontWeight.Bold) },
+                    label = {
+                        Text(
+                            "Enter email",
+                            color = backgroundColorPurple1,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
                     shape = RoundedCornerShape(25.dp)
                 )
 
 
-                TextField(value = messagePassword.value,
-                    onValueChange = {messagePassword.value = it},
+                TextField(
+                    value = messagePassword.value,
+                    onValueChange = { messagePassword.value = it },
                     Modifier.padding(vertical = 15.dp),
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedContainerColor = whiteForUi,
+                        focusedContainerColor = whiteForUi
                     ),
-                    label = { Text("Enter password", color = backgroundColorPurple1, fontWeight = FontWeight.Bold) },
+                    label = {
+                        Text(
+                            "Enter password",
+                            color = backgroundColorPurple1,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
                     shape = RoundedCornerShape(25.dp)
                 )
 
 
-                Button(onClick = { onLogin(messageEmail.value, messagePassword.value) }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(0xff222222)
-                ),)
+                Button(
+                    onClick = { onLogin(messageEmail.value, messagePassword.value) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = whiteForUi,
+                    )
+                )
                 {
-                    Text("Sign In",textAlign = TextAlign.Center, color = backgroundColorPurple1, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Sign In",
+                        textAlign = TextAlign.Center,
+                        color = backgroundColorPurple1,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
-                Button(onClick = {
-                    toSignUp()
-                }, colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(0xff222222)
-                ))
+                Button(
+                    onClick = {
+                        toSignUp()
+                    }, colors = ButtonDefaults.buttonColors(
+                        containerColor = whiteForUi
+                    )
+                )
                 {
-                    Text("Sign Up",textAlign = TextAlign.Center, color = backgroundColorPurple1, fontWeight = FontWeight.Bold)
+                    Text(
+                        "Sign Up",
+                        textAlign = TextAlign.Center,
+                        color = backgroundColorPurple1,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 

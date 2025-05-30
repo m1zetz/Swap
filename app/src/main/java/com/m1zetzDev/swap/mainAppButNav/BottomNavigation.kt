@@ -1,4 +1,5 @@
 package com.m1zetzDev.swap.mainAppButNav
+
 import android.annotation.SuppressLint
 import androidx.compose.material3.rememberModalBottomSheetState
 
@@ -47,9 +48,7 @@ import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 @Composable
 fun AppBottomNavigation(
     navController: NavController,
-)
-{
-
+) {
 
 
     val listItems = listOf(
@@ -57,57 +56,61 @@ fun AppBottomNavigation(
         BottomItem.chats,
         BottomItem.ribbon,
         BottomItem.exchanges,
-        BottomItem.settings)
+        BottomItem.settings
+    )
 
     var selectedIndex by remember {
+        mutableIntStateOf(0)
+    }
+    var indexMemory by remember {
         mutableIntStateOf(0)
     }
 
     var indexForSettingsButton: Int = -1
 
-    var showBottomSheet by remember { mutableStateOf(false)}
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
-               listItems.forEachIndexed{index, navItem ->
-                   NavigationBarItem(
-                       selected = selectedIndex == index,
-                       onClick = {
-                                 if (index == 4){
-                                     showBottomSheet = true
-                                     Log.d("msg","peresol")
-                                     indexForSettingsButton = 4
-                                 }
-                                 else{
-                                     showBottomSheet = false
-                                     selectedIndex = index
-                                     indexForSettingsButton = index
+                listItems.forEachIndexed { index, navItem ->
+                    NavigationBarItem(
+                        selected = selectedIndex == index,
+                        onClick = {
+                            if (index == 4) {
+                                showBottomSheet = true
+                            } else {
+                                selectedIndex = index
+                                showBottomSheet = false
+                            }
 
-                                 }},
-                       icon = {
-                           Icon(painterResource(navItem.iconId), contentDescription = "")
-                              },
-                       label = {navItem.title} )
-               }
+                        },
+                        icon = {
+                            Icon(painterResource(navItem.iconId), contentDescription = "")
+                        },
+                        label = { navItem.title })
+                }
             }
         }) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex, showBottomSheet, indexForSettingsButton)
+        ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex)
+        if (showBottomSheet) {
+            Settings(
+                state = true,
+                onDismiss = { showBottomSheet = false }
+            )
+        }
     }
 
 }
 
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, bottomSheetState: Boolean, index: Int){
-    when(selectedIndex){
+fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
+    when (selectedIndex) {
         0 -> HomePage()
         1 -> Chats()
         2 -> Ribbon()
         3 -> Exchanges()
-    }
-    when(index){
-        4 -> Settings(bottomSheetState)
     }
 
 }

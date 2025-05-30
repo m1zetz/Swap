@@ -33,21 +33,28 @@ import com.google.firebase.auth.auth
 import com.m1zetzDev.swap.R
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple2
+import com.m1zetzDev.swap.ui.theme.whiteForUi
 
 @Composable
 fun ScreenSignUp(onBackPress: () -> Unit) {
 
     Box(
-        modifier = Modifier.background(
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    backgroundColorPurple1, backgroundColorPurple2
+        modifier = Modifier
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        backgroundColorPurple1, backgroundColorPurple2
+                    )
                 )
             )
-        ).padding(80.dp).fillMaxSize()
+            .padding(80.dp)
+            .fillMaxSize()
     ) {
 
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
             Image(
                 bitmap = ImageBitmap.imageResource(R.drawable.registration),
@@ -55,14 +62,15 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
                 modifier = Modifier.padding(start = 25.dp)
             )
 
-            Column(verticalArrangement = Arrangement.Center,
+            Column(
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
             ) {
 
                 Text(
                     "Welcome! Register in our application.",
-                    color = Color.White,
+                    color = whiteForUi,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -74,18 +82,6 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
                 val messagePassword = remember { mutableStateOf("") }
                 val messageName = remember { mutableStateOf("") }
 
-//            TextField(value = messageEmail.value,
-//                onValueChange = {messageName.value = it},
-//                Modifier.padding(vertical = 15.dp),
-//                colors = TextFieldDefaults.colors(
-//                    unfocusedIndicatorColor = Color.Transparent,
-//                    focusedIndicatorColor = Color.Transparent,
-//                    unfocusedContainerColor = Color.White,
-//                    focusedContainerColor = Color.White
-//                ),
-//                label = { Text("Enter name", color = backgroundColorPurple1,) },
-//                shape = RoundedCornerShape(25.dp)
-//            )
 
                 TextField(
                     value = messageEmail.value,
@@ -94,10 +90,16 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedContainerColor = whiteForUi,
+                        focusedContainerColor = whiteForUi
                     ),
-                    label = { Text("Enter email", color = backgroundColorPurple1,) },
+                    label = {
+                        Text(
+                            "Enter email",
+                            color = backgroundColorPurple1,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
                     shape = RoundedCornerShape(25.dp)
                 )
 
@@ -109,10 +111,16 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
+                        unfocusedContainerColor = whiteForUi,
+                        focusedContainerColor = whiteForUi
                     ),
-                    label = { Text("Enter password", color = backgroundColorPurple1) },
+                    label = {
+                        Text(
+                            "Enter password",
+                            color = backgroundColorPurple1,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
                     shape = RoundedCornerShape(25.dp)
                 )
 
@@ -120,33 +128,35 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
                 Button(
                     onClick = { signUp(auth, messageEmail.value, messagePassword.value) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
+                        containerColor = whiteForUi,
                         contentColor = Color(0xff222222)
                     ),
                 )
                 {
-                    Text("Sign Up", textAlign = TextAlign.Center, color = backgroundColorPurple1)
+                    Text(
+                        "Sign Up",
+                        textAlign = TextAlign.Center,
+                        color = backgroundColorPurple1,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
 
                 Button(
                     onClick = {
                         onBackPress()
                     }, colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color(0xff222222)
+                        containerColor = whiteForUi,
                     )
                 )
                 {
                     Text(
                         "Back to Sign In",
                         textAlign = TextAlign.Center,
-                        color = backgroundColorPurple1
+                        color = backgroundColorPurple1,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-        }
-
-
-
+            }
 
 
         }
@@ -155,14 +165,12 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
 }
 
 
-
-
-private fun signUp(firebaseAuth: FirebaseAuth, email: String, password: String){
+private fun signUp(firebaseAuth: FirebaseAuth, email: String, password: String) {
     firebaseAuth.createUserWithEmailAndPassword(email, password)
         .addOnCompleteListener {
-            if(it.isSuccessful){
+            if (it.isSuccessful) {
                 Log.d("MyLog", "Sign Up is Successful!")
-            } else{
+            } else {
                 Log.d("MyLog", "Sign Up is Failed!")
             }
         }
