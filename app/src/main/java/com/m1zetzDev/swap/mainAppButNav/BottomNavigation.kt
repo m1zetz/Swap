@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.util.trace
 import androidx.navigation.NavController
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Chats
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Exchanges
@@ -43,6 +45,8 @@ import com.m1zetzDev.swap.mainAppButNav.MainScreens.Ribbon
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Settings
 
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
+import com.m1zetzDev.swap.ui.theme.forIcons
+import com.m1zetzDev.swap.ui.theme.transparent
 
 
 @Composable
@@ -72,9 +76,18 @@ fun AppBottomNavigation(
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
+            NavigationBar() {
                 listItems.forEachIndexed { index, navItem ->
                     NavigationBarItem(
+                        colors = NavigationBarItemColors(
+                            selectedIconColor = forIcons,
+                            unselectedIconColor = forIcons,
+                            disabledIconColor = forIcons,
+                            selectedTextColor = forIcons,
+                            selectedIndicatorColor = transparent,
+                            unselectedTextColor = forIcons,
+                            disabledTextColor = forIcons
+                        ),
                         selected = selectedIndex == index,
                         onClick = {
                             if (index == 4) {

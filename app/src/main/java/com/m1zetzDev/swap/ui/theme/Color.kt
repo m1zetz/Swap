@@ -17,3 +17,5 @@ val whiteForUi = Color.White
 val grayForUi = Color(0xFFF3F3F3)
 val colorForBorder = Color(0xFFE1E1E1)
 val red = Color.Red
+val forIcons = Color(0xFF7E00D9)
+val transparent = Color.Transparent
