@@ -3,6 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.gms)
+    id("kotlin-kapt")
+    alias(libs.plugins.hilt)
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 android {
@@ -41,7 +47,9 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.androidx.core.ktx)
