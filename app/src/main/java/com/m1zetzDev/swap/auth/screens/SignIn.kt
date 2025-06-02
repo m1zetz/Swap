@@ -33,18 +33,25 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.m1zetzDev.swap.R
+import com.m1zetzDev.swap.common.TextField
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple2
 import com.m1zetzDev.swap.ui.theme.whiteForUi
 
-class Authentication{
+
 
     val auth5 = FirebaseAuth.getInstance()
 
 
-
     @Composable
-    fun ScreenSignIn(toSignUp: () -> Unit, onLogin: (auth: FirebaseAuth ,email: String, password: String) -> Unit) {
+    fun ScreenSignIn(
+        toSignUp: () -> Unit,
+        onLogin: () -> Unit,
+        emailTextField: TextField,
+        passwordTextField: TextField,
+        onChangedEmail: (email: String) -> Unit,
+        onChangedPassword: (password: String) -> Unit
+    ) {
 
         Box(
             modifier = Modifier
@@ -87,12 +94,11 @@ class Authentication{
 
 
 
-                    val messageEmail = remember { mutableStateOf("") }
-                    val messagePassword = remember { mutableStateOf("") }
+
 
                     TextField(
-                        value = messageEmail.value,
-                        onValueChange = { messageEmail.value = it },
+                        value = emailTextField.value,
+                        onValueChange = { onChangedEmail(it)},
                         Modifier.padding(vertical = 15.dp),
                         colors = TextFieldDefaults.colors(
                             unfocusedIndicatorColor = Color.Transparent,
@@ -112,8 +118,8 @@ class Authentication{
 
 
                     TextField(
-                        value = messagePassword.value,
-                        onValueChange = { messagePassword.value = it },
+                        value = passwordTextField.value,
+                        onValueChange = { onChangedPassword(it) },
                         Modifier.padding(vertical = 15.dp),
                         colors = TextFieldDefaults.colors(
                             unfocusedIndicatorColor = Color.Transparent,
@@ -134,7 +140,7 @@ class Authentication{
 
 
                     Button(
-                        onClick = { onLogin(auth5, messageEmail.value, messagePassword.value) },
+                        onClick = { onLogin() },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = whiteForUi,
                         )
@@ -172,7 +178,7 @@ class Authentication{
         Log.d("mylog", "user email: ${auth5.currentUser?.email}")
     }
 
-}
+
 
 
 
