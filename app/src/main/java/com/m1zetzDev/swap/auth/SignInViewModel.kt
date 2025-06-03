@@ -1,15 +1,15 @@
 package com.m1zetzDev.swap.auth
+import androidx.compose.material3.TextField
+import com.m1zetzDev.swap.common.TextField as CustomTextField
 
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.m1zetzDev.swap.common.TextField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.Serializable
 
 class AuthViewModel(
     //authRepository: AuthRepository,
