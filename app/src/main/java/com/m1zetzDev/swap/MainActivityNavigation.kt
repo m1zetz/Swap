@@ -40,16 +40,17 @@ class MainActivityNavigation : ComponentActivity() {
             val vmSignUp: SignUpViewModel = viewModel()
             val vmSettings: SettingsViewModel = viewModel()
 
-
-
             enableEdgeToEdge()
+
             val navController = rememberNavController()
+
             fun performSignOut() {
                 Firebase.auth.signOut()
                 navController.navigate("screen_sign_in")
                 vmSignIn.messageEmail.value = ""
                 vmSignIn.messagePassword.value = ""
             }
+
             NavHost(
                 navController = navController,
                 startDestination = screenSignIn

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavigationViewModel
 
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Chats
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Exchanges
@@ -49,9 +50,8 @@ fun AppBottomNavigation(signOut: () -> Unit) {
         BottomItem.settings
     )
 
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+
+    val vmBottomNavigation: BottomNavigationViewModel = viewModel()
 
     val vmSettings: SettingsViewModel = viewModel()
 
@@ -69,13 +69,13 @@ fun AppBottomNavigation(signOut: () -> Unit) {
                             unselectedTextColor = forIcons,
                             disabledTextColor = forIcons
                         ),
-                        selected = selectedIndex == index,
+                        selected = vmBottomNavigation.currentScreenIndex == index,
                         onClick = {
                             if (index == 4) {
                                 vmSettings.showBottomSheet = true
                             }
                             else {
-                                selectedIndex = index
+                                vmBottomNavigation.currentScreenIndex = index
                                 vmSettings.showBottomSheet = false
                             }
                         },
@@ -86,7 +86,7 @@ fun AppBottomNavigation(signOut: () -> Unit) {
                 }
             }
         }) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex)
+        ContentScreen(modifier = Modifier.padding(innerPadding), vmBottomNavigation.currentScreenIndex)
         if (vmSettings.showBottomSheet) {
             Log.d("", "попал в условие")
             Settings(
