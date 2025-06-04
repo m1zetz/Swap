@@ -88,7 +88,7 @@ fun HomePage(
             AddItemWindow(
                 state = true,
                 onDismiss = { vmAddItem.stateAddItem = false },
-                nameTextField = vmAddItem.messageDescription,
+                nameTextField = vmAddItem.messageName,
                 onChangeName = { name ->
                     vmAddItem.obtainEvent(FieldsState.onChangeName(name))
                 },
@@ -115,7 +115,6 @@ fun AddItemWindow(
     val sheetState = rememberModalBottomSheetState()
 
     if (!state) return
-
 
     ModalBottomSheet(
         sheetState = sheetState,
@@ -190,7 +189,6 @@ fun AddItemWindow(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                val messageDescription = remember { mutableStateOf("") }
                 val maxChar = 290
 
                 TextField(

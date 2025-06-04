@@ -24,7 +24,7 @@ class HomeAddItemViewModel : ViewModel() {
                 )
             }
             is FieldsState.onChangeDescription -> {
-                messageDescription = messageName.copy(
+                messageDescription = messageDescription.copy(
                     value = fieldsState.description
                 )
             }
