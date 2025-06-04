@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple2
 import com.m1zetzDev.swap.ui.theme.colorForBorder
@@ -46,15 +47,19 @@ import java.time.MonthDay
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Settings(state: Boolean, onDismiss: () -> Unit) {
+fun Settings(
+    viewModel: SettingsViewModel,
+    onDismiss: () -> Unit,
+    signOut: () -> Unit
+    ) {
+
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(state) }
-    if (showBottomSheet) {
-        Log.d("msg", "true")
+
+    if (viewModel.showBottomSheet) {
         ModalBottomSheet(
             sheetState = sheetState,
             onDismissRequest = {
-                showBottomSheet = false
+                viewModel.showBottomSheet = false
                 onDismiss()
             },
         ) {
@@ -100,7 +105,8 @@ fun Settings(state: Boolean, onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.size(10.dp))
                 Column(verticalArrangement = Arrangement.Bottom) {
                     Button(
-                        onClick = { signOut() },
+                        onClick = { signOut()
+                                  Log.d("'","нажал кнопку")},
                         shape = RectangleShape,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
@@ -120,8 +126,4 @@ fun Settings(state: Boolean, onDismiss: () -> Unit) {
             }
         }
     }
-}
-
-fun signOut() {
-    Firebase.auth.signOut()
 }

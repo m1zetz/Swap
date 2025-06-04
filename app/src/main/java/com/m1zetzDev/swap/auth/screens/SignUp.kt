@@ -31,12 +31,21 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.m1zetzDev.swap.R
+import com.m1zetzDev.swap.auth.AuthEvent
+import com.m1zetzDev.swap.common.TextField
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple2
 import com.m1zetzDev.swap.ui.theme.whiteForUi
 
 @Composable
-fun ScreenSignUp(onBackPress: () -> Unit) {
+fun ScreenSignUp(
+    onBackPress: () -> Unit,
+    signUp: () -> Unit,
+    emailTextField: TextField,
+    passwordTextField: TextField,
+    onChangeEmail: (email: String) -> Unit,
+    onChangePassword: (password: String) -> Unit
+) {
 
     Box(
         modifier = Modifier
@@ -76,16 +85,9 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
                     textAlign = TextAlign.Center
                 )
 
-                val auth = Firebase.auth
-
-                val messageEmail = remember { mutableStateOf("") }
-                val messagePassword = remember { mutableStateOf("") }
-                val messageName = remember { mutableStateOf("") }
-
-
                 TextField(
-                    value = messageEmail.value,
-                    onValueChange = { messageEmail.value = it },
+                    value = emailTextField.value,
+                    onValueChange = { onChangeEmail(it)},
                     Modifier.padding(vertical = 15.dp),
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
@@ -105,8 +107,8 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
 
 
                 TextField(
-                    value = messagePassword.value,
-                    onValueChange = { messagePassword.value = it },
+                    value = passwordTextField.value,
+                    onValueChange = { onChangePassword(it) },
                     Modifier.padding(vertical = 15.dp),
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
@@ -126,7 +128,7 @@ fun ScreenSignUp(onBackPress: () -> Unit) {
 
 
                 Button(
-                    onClick = { signUp(auth, messageEmail.value, messagePassword.value) },
+                    onClick = {signUp()},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = whiteForUi,
                         contentColor = Color(0xff222222)

@@ -1,6 +1,4 @@
 package com.m1zetzDev.swap.auth
-import androidx.compose.material3.TextField
-import com.m1zetzDev.swap.common.TextField as CustomTextField
 
 
 import androidx.compose.runtime.getValue
@@ -11,7 +9,7 @@ import com.m1zetzDev.swap.common.TextField
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AuthViewModel(
+class SignInViewModel(
     //authRepository: AuthRepository,
 ) : ViewModel() {
 
@@ -38,13 +36,12 @@ class AuthViewModel(
 
 }
 
-data class AuthState(val a: String = "24"){
-
-}
-
 sealed class AuthEvent{
     class OnChangeEmail(val email: String) : AuthEvent()
     class OnChangePassword(val password: String) : AuthEvent()
 
 }
 
+data class AuthState(val a: String = "24"){
+
+}

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.ModalBottomSheet
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,10 +14,14 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.m1zetzDev.swap.auth.AuthEvent
-import com.m1zetzDev.swap.auth.AuthViewModel
+import com.m1zetzDev.swap.auth.RegEvent
+import com.m1zetzDev.swap.auth.SignInViewModel
+import com.m1zetzDev.swap.auth.SignUpViewModel
 import com.m1zetzDev.swap.auth.screens.ScreenSignIn
 import com.m1zetzDev.swap.auth.screens.ScreenSignUp
 import com.m1zetzDev.swap.mainAppButNav.AppBottomNavigation
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.Settings
 
 
 class MainActivityNavigation : ComponentActivity() {
@@ -29,22 +34,35 @@ class MainActivityNavigation : ComponentActivity() {
             val screenSignIn = "screen_sign_in"
             var choiceStartScreen = ""
 
+            val auth = Firebase.auth
+
+            val vmSignIn: SignInViewModel = viewModel()
+            val vmSignUp: SignUpViewModel = viewModel()
+            val vmSettings: SettingsViewModel = viewModel()
+
+
+
             enableEdgeToEdge()
             val navController = rememberNavController()
+            fun performSignOut() {
+                Firebase.auth.signOut()
+                navController.navigate("screen_sign_in")
+                vmSignIn.messageEmail.value = ""
+                vmSignIn.messagePassword.value = ""
+            }
             NavHost(
                 navController = navController,
                 startDestination = screenSignIn
             ) {
                 composable("screen_sign_in") {
 
-                    val vm: AuthViewModel = viewModel()
-
-
 
                     ScreenSignIn(
                         onLogin = {
-                            val auth = Firebase.auth
-                            auth.signInWithEmailAndPassword(vm.messageEmail.value, vm.messagePassword.value)
+                            auth.signInWithEmailAndPassword(
+                                vmSignIn.messageEmail.value,
+                                vmSignIn.messagePassword.value
+                            )
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
                                         Log.d("MyLog", "Sign In is Successful!")
@@ -52,17 +70,18 @@ class MainActivityNavigation : ComponentActivity() {
                                     } else {
                                         Log.d("MyLog", "Sign In is Failed!")
                                     }
-                                }},
+                                }
+                        },
                         toSignUp = {
                             navController.navigate("screen_sign_up")
                         },
-                        emailTextField = vm.messageEmail,
+                        emailTextField = vmSignIn.messageEmail,
                         onChangedEmail = { email ->
-                            vm.obtainEvent(AuthEvent.OnChangeEmail(email))
+                            vmSignIn.obtainEvent(AuthEvent.OnChangeEmail(email))
                         },
-                        passwordTextField = vm.messagePassword,
+                        passwordTextField = vmSignIn.messagePassword,
                         onChangedPassword = { password ->
-                            vm.obtainEvent(AuthEvent.OnChangePassword(password))
+                            vmSignIn.obtainEvent(AuthEvent.OnChangePassword(password))
                         }
 
                     )
@@ -71,17 +90,51 @@ class MainActivityNavigation : ComponentActivity() {
                 }
                 composable("screen_sign_up") {
                     ScreenSignUp(
+                        signUp = {
+                            auth.createUserWithEmailAndPassword(
+                                vmSignUp.messageEmail.value,
+                                vmSignUp.messagePassword.value
+                            )
+                                .addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        Log.d("MyLog", "Sign Up is Successful!")
+                                        navController.navigate("screen_sign_in")
+                                    } else {
+                                        Log.d("MyLog", "Sign Up is Failed!")
+                                    }
+                                }
+                        },
                         onBackPress = {
                             navController.popBackStack()
+                        },
+                        emailTextField = vmSignUp.messageEmail,
+                        onChangeEmail = { email ->
+                            vmSignUp.obtainEvent(RegEvent.OnChangeEmail(email))
+                        },
+                        passwordTextField = vmSignUp.messagePassword,
+                        onChangePassword = { password ->
+                            vmSignUp.obtainEvent(RegEvent.OnChangePassword(password))
                         }
                     )
                 }
                 composable("main_window_screen") {
-                    AppBottomNavigation()
+                    AppBottomNavigation(
+                        signOut = { performSignOut() }
+                    )
                 }
-
+                composable("settings_bottom_sheet") {
+                    Settings(
+                        signOut = { performSignOut() },
+                        onDismiss = { vmSettings.showBottomSheet = false },
+                        viewModel = vmSettings
+                    )
+                }
 
             }
         }
+
+
     }
 }
+
+

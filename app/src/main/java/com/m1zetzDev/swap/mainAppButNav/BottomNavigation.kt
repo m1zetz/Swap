@@ -1,4 +1,5 @@
 package com.m1zetzDev.swap.mainAppButNav
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
 
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Chats
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Exchanges
@@ -36,8 +39,7 @@ import com.m1zetzDev.swap.ui.theme.transparent
 
 
 @Composable
-fun AppBottomNavigation() {
-
+fun AppBottomNavigation(signOut: () -> Unit) {
 
     val listItems = listOf(
         BottomItem.myItems_Home,
@@ -51,8 +53,7 @@ fun AppBottomNavigation() {
         mutableIntStateOf(0)
     }
 
-    var showBottomSheet by remember { mutableStateOf(false) }
-
+    val vmSettings: SettingsViewModel = viewModel()
 
     Scaffold(modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -71,11 +72,11 @@ fun AppBottomNavigation() {
                         selected = selectedIndex == index,
                         onClick = {
                             if (index == 4) {
-                                showBottomSheet = true
+                                vmSettings.showBottomSheet = true
                             }
                             else {
                                 selectedIndex = index
-                                showBottomSheet = false
+                                vmSettings.showBottomSheet = false
                             }
                         },
                         icon = {
@@ -86,10 +87,12 @@ fun AppBottomNavigation() {
             }
         }) { innerPadding ->
         ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex)
-        if (showBottomSheet) {
+        if (vmSettings.showBottomSheet) {
+            Log.d("", "попал в условие")
             Settings(
-                state = true,
-                onDismiss = { showBottomSheet = false }
+                viewModel = vmSettings,
+                signOut = {signOut()},
+                onDismiss = { vmSettings.showBottomSheet = false}
             )
         }
     }
