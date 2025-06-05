@@ -82,7 +82,7 @@ fun HomePage(
 ) {
     val vmAddItem: HomeAddItemViewModel = viewModel()
     LaunchedEffect(Unit) {
-        vmAddItem.getData()
+        vmAddItem.getMyData()
     }
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
