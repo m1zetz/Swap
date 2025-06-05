@@ -174,7 +174,8 @@ fun HomePage(
                                     }
 
                                     Column(verticalArrangement = Arrangement.Top,
-                                        horizontalAlignment = Alignment.Start) {
+                                        horizontalAlignment = Alignment.Start,
+                                        modifier = Modifier.padding(top = 10.dp)) {
                                         // name
                                         Text(
                                             text = cards.name.replaceFirstChar { it.uppercaseChar() },

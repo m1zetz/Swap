@@ -21,3 +21,5 @@ val red = Color.Red
 val forIcons = Color(0xFF7E00D9)
 val transparent = Color.Transparent
 val green = Color(0xFF0DBD1F)
+val blue = Color.Blue
+val bluePink = Color(0xFF9879C2)

@@ -3,10 +3,17 @@ package com.m1zetzDev.swap.mainAppButNav.MainScreens
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import android.graphics.BitmapFactory
+import android.os.Message
 
 import androidx.compose.material.icons.filled.Refresh
 import android.util.Base64
+import androidx.compose.animation.core.animateFloatAsState
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,22 +28,33 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,9 +68,14 @@ import com.m1zetzDev.swap.R
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.HomeAddItemViewModel
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
+import com.m1zetzDev.swap.ui.theme.blue
+import com.m1zetzDev.swap.ui.theme.bluePink
+import com.m1zetzDev.swap.ui.theme.green
+import com.m1zetzDev.swap.ui.theme.red
 import com.m1zetzDev.swap.ui.theme.whiteForUi
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun Ribbon() {
     val vmAddItem: HomeAddItemViewModel = viewModel()
@@ -69,7 +92,7 @@ fun Ribbon() {
                         titleContentColor = whiteForUi
                     ),
                     actions = {
-                        IconButton(onClick = {vmAddItem.getData()}) {
+                        IconButton(onClick = { vmAddItem.getData() }) {
                             Icon(Icons.Filled.Refresh, contentDescription = "")
                         }
                     }
@@ -90,80 +113,149 @@ fun Ribbon() {
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
+
                         // ТУТ КАРТОЧКИ
                         items(vmAddItem.listOfCards) { cards ->
-                            Card(
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                ),
-                                modifier = Modifier.fillMaxWidth().padding(10.dp).height(height = 140.dp)
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.Start,
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    val base64image = Base64.decode(cards.imageUri, Base64.DEFAULT)
-                                    val bitmap = BitmapFactory.decodeByteArray(
-                                        base64image,
-                                        0,
-                                        base64image.size
-                                    )
-                                    Column(verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally) {
-                                        if (bitmap != null) {
-                                            AsyncImage(
-                                                model = bitmap,
-                                                contentDescription = "",
-                                                modifier = Modifier.size(140.dp).padding(all = 10.dp).clip(shape = RoundedCornerShape(10.dp)),
-                                                contentScale = ContentScale.Crop,
-
-                                                )
+                            val dismissState =
+                                rememberDismissState(
+                                    confirmStateChange = { dismissValue ->
+                                        if (dismissValue == DismissValue.DismissedToEnd || dismissValue == DismissValue.DismissedToStart) {
+                                            vmAddItem.removeCard(cards)
+                                            true
                                         } else {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.icon_camera),
-                                                null,
-                                                modifier = Modifier.size(140.dp).padding(10.dp)
-                                            )
+                                            false
                                         }
                                     }
+                                )
 
-                                    Column(verticalArrangement = Arrangement.Top,
-                                        horizontalAlignment = Alignment.Start) {
-                                        // name
-                                        Text(
-                                            text = cards.name.replaceFirstChar { it.uppercaseChar() },
-                                            modifier = Modifier,
-                                            color = backgroundColorPurple1,
-                                            fontSize = 27.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        //category
-                                        Text(
-                                            text = "Category: ${cards.category}",
-                                            modifier = Modifier,
-                                            color = backgroundColorPurple3,
-                                            fontSize = 18.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
+                            SwipeToDismiss(
+                                state = dismissState,
+                                directions = setOf(
+                                    DismissDirection.EndToStart,
+                                ),
+                                background = {
+                                    val direction =
+                                        dismissState.dismissDirection ?: return@SwipeToDismiss
+                                    val color by animateColorAsState(
+                                        targetValue = when (dismissState.targetValue) {
+                                            DismissValue.Default -> bluePink
+                                            DismissValue.DismissedToStart -> blue
+                                            else -> whiteForUi
+                                        }
+                                    )
+                                    val icon = Icons.Default.Add
 
-                                        //description
-                                        Text(
-                                            text = cards.description.replaceFirstChar { it.uppercaseChar() },
-                                            modifier = Modifier,
-                                            color = backgroundColorPurple3,
-                                            fontSize = 15.sp
+                                    val scale by animateFloatAsState(
+                                        targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 2f
+                                    )
+
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(color = color)
+                                            .padding(start = 12.dp, end = 12.dp),
+                                        contentAlignment = Alignment.CenterEnd
+                                    ) {
+                                        Icon(
+                                            icon,
+                                            contentDescription = "Icon",
+                                            modifier = Modifier.scale(scale),
+                                            tint = whiteForUi
                                         )
+                                    }
+                                },
+                                dismissContent = {
+                                    Card(
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                        ),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(10.dp)
+                                            .height(height = 140.dp)
+                                    ) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.Start,
+                                            modifier = Modifier.fillMaxSize()
+                                        ) {
+                                            val base64image =
+                                                Base64.decode(cards.imageUri, Base64.DEFAULT)
+                                            val bitmap = BitmapFactory.decodeByteArray(
+                                                base64image,
+                                                0,
+                                                base64image.size
+                                            )
+                                            Column(
+                                                verticalArrangement = Arrangement.Center,
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                if (bitmap != null) {
+                                                    AsyncImage(
+                                                        model = bitmap,
+                                                        contentDescription = "",
+                                                        modifier = Modifier
+                                                            .size(140.dp)
+                                                            .padding(all = 10.dp)
+                                                            .clip(shape = RoundedCornerShape(10.dp)),
+                                                        contentScale = ContentScale.Crop,
+
+                                                        )
+                                                } else {
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.icon_camera),
+                                                        null,
+                                                        modifier = Modifier
+                                                            .size(140.dp)
+                                                            .padding(10.dp)
+                                                    )
+                                                }
+                                            }
+
+                                            Column(
+                                                verticalArrangement = Arrangement.Top,
+                                                horizontalAlignment = Alignment.Start,
+                                                modifier = Modifier.padding(top = 10.dp)
+                                            ) {
+                                                // name
+                                                Text(
+                                                    text = cards.name.replaceFirstChar { it.uppercaseChar() },
+                                                    modifier = Modifier,
+                                                    color = backgroundColorPurple1,
+                                                    fontSize = 27.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                                //category
+                                                Text(
+                                                    text = "Category: ${cards.category}",
+                                                    modifier = Modifier,
+                                                    color = backgroundColorPurple3,
+                                                    fontSize = 18.sp,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+
+                                                //description
+                                                Text(
+                                                    text = cards.description.replaceFirstChar { it.uppercaseChar() },
+                                                    modifier = Modifier,
+                                                    color = backgroundColorPurple3,
+                                                    fontSize = 15.sp
+                                                )
+
+                                            }
+                                        }
+
 
                                     }
+                                    Spacer(modifier = Modifier.size((8.dp)))
                                 }
+                            )
 
-
-                            }
-                            Spacer(modifier = Modifier.size((8.dp)))
                         }
                     }
                 }
-            })
+            }
+        )
 
 
     }

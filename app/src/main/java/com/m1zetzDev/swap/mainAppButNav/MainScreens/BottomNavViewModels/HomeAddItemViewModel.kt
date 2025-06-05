@@ -35,6 +35,11 @@ class HomeAddItemViewModel : ViewModel() {
 
     var listOfCards by mutableStateOf(emptyList<Cards>())
 
+    fun removeCard(card: Cards) {
+        listOfCards = listOfCards.toMutableList().apply {
+            remove(card)
+        }
+    }
 
     fun obtainEvent(fieldsState: FieldsState) {
         when (fieldsState) {
