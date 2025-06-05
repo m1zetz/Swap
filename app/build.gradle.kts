@@ -47,6 +47,8 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.graphics:graphics-shapes:1.0.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
     implementation(libs.firebase.firestore)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val backgroundColorPurple1 = Color(0xFF7E00D9)
 val backgroundColorPurple2 = Color(0xFFD07EFF)
+val backgroundColorPurple3 = Color(0xFF580094)
 
 val whiteForUi = Color.White
 val grayForUi = Color(0xFFF3F3F3)

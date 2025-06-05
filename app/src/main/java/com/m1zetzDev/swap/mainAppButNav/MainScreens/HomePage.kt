@@ -1,8 +1,14 @@
 package com.m1zetzDev.swap.mainAppButNav.MainScreens
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.compose.foundation.Image
@@ -25,6 +31,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,6 +41,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -52,9 +62,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -63,6 +76,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.m1zetzDev.swap.R
@@ -73,6 +87,11 @@ import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.HomeAddI
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.green
 import com.m1zetzDev.swap.ui.theme.whiteForUi
+import java.io.ByteArrayOutputStream
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.filled.Refresh
+import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,7 +99,9 @@ import com.m1zetzDev.swap.ui.theme.whiteForUi
 @Composable
 fun HomePage(
 ) {
+
     val vmAddItem: HomeAddItemViewModel = viewModel()
+
     LaunchedEffect(Unit) {
         vmAddItem.getMyData()
     }
@@ -92,13 +113,20 @@ fun HomePage(
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorPurple1,
                         titleContentColor = whiteForUi
-                    )
+                    ),
+                    actions = {
+                        IconButton(onClick = {vmAddItem.getData()}) {
+                            Icon(Icons.Filled.Refresh, contentDescription = "")
+                        }
+                    }
                 )
             },
             content = { paddingValues ->
                 Column(
                     modifier = Modifier
-                        .fillMaxSize().padding(paddingValues).padding(vertical = 8.dp),
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(vertical = 8.dp),
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -114,41 +142,69 @@ fun HomePage(
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                 ),
-                                modifier = Modifier
-                                    .size(width = max(240.dp, 380.dp), height = max(100.dp, 150.dp))
+                                modifier = Modifier.fillMaxWidth().padding(10.dp).height(height = 140.dp)
                             ) {
                                 Row(
                                     horizontalArrangement = Arrangement.Start,
                                     modifier = Modifier.fillMaxSize()
                                 ) {
-                                    Image(
-                                        painter = painterResource(
-                                            R.drawable.icon_camera
-                                        ),
-                                        contentDescription = "",
-                                        Modifier.size(max(100.dp, 140.dp))
+                                    val base64image = Base64.decode(cards.imageUri, Base64.DEFAULT)
+                                    val bitmap = BitmapFactory.decodeByteArray(
+                                        base64image,
+                                        0,
+                                        base64image.size
                                     )
-                                    Column() {
+                                    Column(verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally) {
+                                        if (bitmap != null) {
+                                            AsyncImage(
+                                                model = bitmap,
+                                                contentDescription = "",
+                                                modifier = Modifier.size(140.dp).padding(all = 10.dp).clip(shape = RoundedCornerShape(10.dp)),
+                                                contentScale = ContentScale.Crop,
+
+                                                )
+                                        } else {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.icon_camera),
+                                                null,
+                                                modifier = Modifier.size(140.dp).padding(10.dp)
+                                            )
+                                        }
+                                    }
+
+                                    Column(verticalArrangement = Arrangement.Top,
+                                        horizontalAlignment = Alignment.Start) {
                                         // name
                                         Text(
-                                            text = "${cards.name}, Category: ${cards.category}",
-                                            modifier = Modifier
-                                                .padding(16.dp),
-                                            textAlign = TextAlign.Center,
+                                            text = cards.name.replaceFirstChar { it.uppercaseChar() },
+                                            modifier = Modifier,
+                                            color = backgroundColorPurple1,
+                                            fontSize = 27.sp,
+                                            fontWeight = FontWeight.Bold
                                         )
+                                        //category
+                                        Text(
+                                            text = "Category: ${cards.category}",
+                                            modifier = Modifier,
+                                            color = backgroundColorPurple3,
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+
                                         //description
                                         Text(
-                                            text = cards.description,
-                                            modifier = Modifier
-                                                .padding(16.dp),
-                                            textAlign = TextAlign.Center,
+                                            text = cards.description.replaceFirstChar { it.uppercaseChar() },
+                                            modifier = Modifier,
+                                            color = backgroundColorPurple3,
+                                            fontSize = 15.sp
                                         )
+
                                     }
                                 }
 
 
                             }
-                            Spacer(modifier = Modifier.size((8.dp)))
                         }
                     }
                 }
@@ -212,6 +268,10 @@ fun AddItemWindow(
 
     val sheetState = rememberModalBottomSheetState()
 
+    val cv = LocalContext.current.contentResolver
+
+
+
     if (!state) return
 
     ModalBottomSheet(
@@ -223,16 +283,17 @@ fun AddItemWindow(
 
     ) {
 
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .heightIn(min = 800.dp, max = 1500.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            val result = remember { mutableStateOf<Bitmap?>(null) }
             val launcher =
-                rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-                    result.value = it
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                    vmAddItem.messageUri = uri
+//                    if (uri == null) return@rememberLauncherForActivityResult
                 }
 
             Spacer(modifier = Modifier.size(10.dp))
@@ -246,7 +307,7 @@ fun AddItemWindow(
 
                 Button(
                     modifier = Modifier.size(130.dp),
-                    onClick = { launcher.launch() },
+                    onClick = { launcher.launch(PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)) },
                     colors = ButtonDefaults.buttonColors(
                         contentColor = whiteForUi,
                         containerColor = backgroundColorPurple1
@@ -264,15 +325,6 @@ fun AddItemWindow(
 
                 }
 
-                //Image
-
-                result.value?.let { image ->
-                    Image(image.asImageBitmap(), null, modifier = Modifier.size(120.dp))
-                } ?: Image(
-                    painter = painterResource(id = R.drawable.icon_camera),
-                    null,
-                    modifier = Modifier.size(100.dp)
-                )
 
                 //SendData
 
@@ -280,7 +332,7 @@ fun AddItemWindow(
                     horizontalAlignment = Alignment.End,
                 ) {
                     Button(
-                        onClick = { vmAddItem.sendData() },
+                        onClick = { vmAddItem.sendData(cv) },
                         colors = ButtonDefaults.buttonColors(
                             contentColor = whiteForUi,
                             containerColor = green,
