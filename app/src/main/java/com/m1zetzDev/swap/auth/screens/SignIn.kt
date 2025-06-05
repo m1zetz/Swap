@@ -175,6 +175,7 @@ fun ScreenSignIn(
 
     }
     Log.d("mylog", "user email: ${auth5.currentUser?.email}")
+    Log.d("mylog", "user id: ${auth5.currentUser?.uid}")
 }
 
 

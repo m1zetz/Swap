@@ -1,5 +1,6 @@
 package com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels
 
+import android.util.Log
 import com.m1zetzDev.swap.common.TextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+const val CARDS_COLLECTION = "cards"
 
 class HomeAddItemViewModel : ViewModel() {
 
@@ -21,6 +23,7 @@ class HomeAddItemViewModel : ViewModel() {
     var messageDescription by mutableStateOf(TextField())
     var messageCategory by mutableStateOf(TextField())
 
+    var listOfCards by mutableStateOf(emptyList<Cards>())
 
     fun obtainEvent(fieldsState: FieldsState) {
         when (fieldsState) {
@@ -29,11 +32,13 @@ class HomeAddItemViewModel : ViewModel() {
                     value = fieldsState.name
                 )
             }
+
             is FieldsState.onChangeDescription -> {
                 messageDescription = messageDescription.copy(
                     value = fieldsState.description
                 )
             }
+
             is FieldsState.onChangeCategory -> {
                 messageCategory = messageCategory.copy(
                     value = fieldsState.category
@@ -43,13 +48,36 @@ class HomeAddItemViewModel : ViewModel() {
         }
     }
 
-    fun sendData(){
-        fireBase.collection("cards").document().set("name" to messageName)
-        fireBase.collection("cards").document().set("description" to messageDescription)
-        fireBase.collection("cards").document().set("category" to messageCategory)
+    fun getData(){
+        fireBase.collection(CARDS_COLLECTION).get().addOnCompleteListener{ task ->
+            if(task.isSuccessful){
+                listOfCards = task.result.toObjects(Cards::class.java)
+            }
+            else{
+                Log.d("msg", "данные не получены")
+            }
+        }
+    }
+
+    fun sendData() {
+        fireBase.collection(CARDS_COLLECTION).document().set(
+            Cards(
+                name = messageName.value,
+                description = messageDescription.value,
+                category = messageCategory.value,
+                imageUrl = ""
+            )
+        )
     }
 
 }
+
+data class Cards(
+    val name: String = "",
+    val description: String = "",
+    val category: String = "",
+    val imageUrl: String = ""
+)
 
 sealed class FieldsState {
     class onChangeName(val name: String) : FieldsState()
