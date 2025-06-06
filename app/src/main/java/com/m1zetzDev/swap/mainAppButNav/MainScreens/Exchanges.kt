@@ -1,21 +1,313 @@
 package com.m1zetzDev.swap.mainAppButNav.MainScreens
 
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.m1zetzDev.swap.R
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ExchangeCard
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ExchangesViewModel
+import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
+import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
+import com.m1zetzDev.swap.ui.theme.darkGray
+import com.m1zetzDev.swap.ui.theme.lightGreen
+import com.m1zetzDev.swap.ui.theme.lightRed
+import com.m1zetzDev.swap.ui.theme.whiteForUi
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Exchanges() {
+    val card1 = ExchangeCard(
+        name = "Shadow Blade",
+        category = "Weapon",
+        description = "Forged in the darkness, it absorbs light.",
+        imageUri = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2N8z8BQDwAFbALY+a0B1wAAAABJRU5ErkJggg=="
+    )
+
+    val card2 = ExchangeCard(
+        name = "Crystal Heart",
+        category = "Relic",
+        description = "A relic of an ancient civilization full of power.",
+        imageUri = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2N8z8BQDwAFbALY+a0B1wAAAABJRU5ErkJggg=="
+    )
+
+    val vmExchanges: ExchangesViewModel = viewModel()
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 8.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Text("Exchanges", textAlign = TextAlign.Center)
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("All Announcements", fontSize = 22.sp) },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = backgroundColorPurple1,
+                        titleContentColor = whiteForUi
+                    )
+                )
+            },
+            content = { paddingValues ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.8f)
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+
+//             ТУТ КАРТОЧКИ
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                                .height(height = 450.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = darkGray,
+
+                                )
+                        ) {
+                            Column() {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp)
+                                        .height(height = 140.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Start,
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        val base64image =
+                                            Base64.decode(card1.imageUri, Base64.DEFAULT)
+                                        val bitmap = BitmapFactory.decodeByteArray(
+                                            base64image,
+                                            0,
+                                            base64image.size
+                                        )
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            if (bitmap != null) {
+                                                AsyncImage(
+                                                    model = bitmap,
+                                                    contentDescription = "",
+                                                    modifier = Modifier
+                                                        .size(140.dp)
+                                                        .padding(10.dp)
+                                                        .clip(RoundedCornerShape(10.dp)),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            } else {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.icon_camera),
+                                                    contentDescription = null,
+                                                    modifier = Modifier
+                                                        .size(140.dp)
+                                                        .padding(10.dp)
+                                                )
+                                            }
+                                        }
+
+                                        Column(
+                                            verticalArrangement = Arrangement.Top,
+                                            horizontalAlignment = Alignment.Start,
+                                            modifier = Modifier.padding(top = 10.dp)
+                                        ) {
+                                            Text(
+                                                text = card1.name.replaceFirstChar { it.uppercaseChar() },
+                                                color = backgroundColorPurple1,
+                                                fontSize = 27.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = "Category: ${card1.category}",
+                                                color = backgroundColorPurple3,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = card1.description.replaceFirstChar { it.uppercaseChar() },
+                                                color = backgroundColorPurple3,
+                                                fontSize = 15.sp
+                                            )
+                                        }
+                                    }
+                                }
+
+
+                                Spacer(modifier = Modifier.size(5.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.arrow1),
+                                        contentDescription = "",
+                                        Modifier.size(70.dp),
+                                        colorFilter = ColorFilter.tint(whiteForUi)
+                                    )
+                                    Spacer(modifier = Modifier.size(20.dp))
+                                    Image(
+                                        painter = painterResource(R.drawable.arrow2),
+                                        contentDescription = "",
+                                        Modifier.size(70.dp),
+                                        colorFilter = ColorFilter.tint(whiteForUi)
+                                    )
+                                }
+
+
+                                Spacer(modifier = Modifier.size(5.dp))
+
+
+
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp)
+                                        .height(height = 140.dp)
+                                ) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Start,
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        val base64image =
+                                            Base64.decode(card2.imageUri, Base64.DEFAULT)
+                                        val bitmap = BitmapFactory.decodeByteArray(
+                                            base64image,
+                                            0,
+                                            base64image.size
+                                        )
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            if (bitmap != null) {
+                                                AsyncImage(
+                                                    model = bitmap,
+                                                    contentDescription = "",
+                                                    modifier = Modifier
+                                                        .size(140.dp)
+                                                        .padding(10.dp)
+                                                        .clip(RoundedCornerShape(10.dp)),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            } else {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.icon_camera),
+                                                    contentDescription = null,
+                                                    modifier = Modifier
+                                                        .size(140.dp)
+                                                        .padding(10.dp)
+                                                )
+                                            }
+                                        }
+
+                                        Column(
+                                            verticalArrangement = Arrangement.Top,
+                                            horizontalAlignment = Alignment.Start,
+                                            modifier = Modifier.padding(top = 10.dp)
+                                        ) {
+                                            Text(
+                                                text = card2.name.replaceFirstChar { it.uppercaseChar() },
+                                                color = backgroundColorPurple1,
+                                                fontSize = 27.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = "Category: ${card2.category}",
+                                                color = backgroundColorPurple3,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = card2.description.replaceFirstChar { it.uppercaseChar() },
+                                                color = backgroundColorPurple3,
+                                                fontSize = 15.sp
+                                            )
+                                        }
+                                    }
+                                }
+                                Spacer(modifier = Modifier.size(5.dp))
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                                    Button(
+                                        onClick = {}, colors = ButtonColors(
+                                            containerColor = lightGreen,
+                                            contentColor = whiteForUi,
+                                            disabledContainerColor = lightGreen,
+                                            disabledContentColor = whiteForUi
+                                        ),
+                                        modifier = Modifier.padding(5.dp)
+                                    ) {
+                                        Text("Accept", textAlign = TextAlign.Center)
+                                    }
+                                    Button(
+                                        onClick = {}, colors = ButtonColors(
+                                            containerColor = lightRed,
+                                            contentColor = whiteForUi,
+                                            disabledContainerColor = lightRed,
+                                            disabledContentColor = whiteForUi
+                                        ),
+                                        modifier = Modifier.padding(5.dp)
+                                    ) {
+                                        Text("Reject", textAlign = TextAlign.Center)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+            })
     }
 }

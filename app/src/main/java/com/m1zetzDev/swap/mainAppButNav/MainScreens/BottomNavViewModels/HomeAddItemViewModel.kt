@@ -34,6 +34,7 @@ class HomeAddItemViewModel : ViewModel() {
 
 
     var listOfCards by mutableStateOf(emptyList<Cards>())
+    var listOfMyCards by mutableStateOf(emptyList<Cards>())
 
     fun removeCard(card: Cards) {
         listOfCards = listOfCards.toMutableList().apply {
@@ -79,7 +80,7 @@ class HomeAddItemViewModel : ViewModel() {
         val uid = Firebase.auth.currentUser?.uid?: return
         fireBase.collection(CARDS_COLLECTION).whereEqualTo("user_id", uid).get().addOnCompleteListener{ task ->
             if(task.isSuccessful){
-                listOfCards = task.result.toObjects(Cards::class.java)
+                listOfMyCards = task.result.toObjects(Cards::class.java)
             }
             else{
                 Log.d("msg", "данные не получены")
@@ -91,6 +92,7 @@ class HomeAddItemViewModel : ViewModel() {
 
         val uid = Firebase.auth.currentUser?.uid?: return
         val uri = messageUri
+        val userEmail = Firebase.auth.currentUser?.email
 
         if (uri == null) {
             Log.e("sendData", "Image URI is null. Item not sent.")
@@ -99,6 +101,7 @@ class HomeAddItemViewModel : ViewModel() {
         fireBase.collection(CARDS_COLLECTION).document().set(
             Cards(
                 user_id = uid,
+                userEmail = userEmail.toString(),
                 name = messageName.value,
                 description = messageDescription.value,
                 category = messageCategory.value,
@@ -119,6 +122,7 @@ class HomeAddItemViewModel : ViewModel() {
 
 
 data class Cards(
+    val userEmail: String = "",
     val user_id: String = "",
     val name: String = "",
     val description: String = "",

@@ -137,7 +137,7 @@ fun HomePage(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         // ТУТ КАРТОЧКИ
-                        items(vmAddItem.listOfCards) { cards ->
+                        items(vmAddItem.listOfMyCards) { cards ->
                             Card(
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
