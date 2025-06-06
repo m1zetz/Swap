@@ -55,32 +55,20 @@ import com.m1zetzDev.swap.ui.theme.whiteForUi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Exchanges() {
-    val card1 = ExchangeCard(
-        name = "Shadow Blade",
-        category = "Weapon",
-        description = "Forged in the darkness, it absorbs light.",
-        imageUri = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2N8z8BQDwAFbALY+a0B1wAAAABJRU5ErkJggg=="
-    )
-
-    val card2 = ExchangeCard(
-        name = "Crystal Heart",
-        category = "Relic",
-        description = "A relic of an ancient civilization full of power.",
-        imageUri = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQYV2N8z8BQDwAFbALY+a0B1wAAAABJRU5ErkJggg=="
-    )
 
     val vmExchanges: ExchangesViewModel = viewModel()
+    vmExchanges.getMyData()
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("All Announcements", fontSize = 22.sp) },
+                    title = { Text("Exchanges", fontSize = 22.sp) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorPurple1,
                         titleContentColor = whiteForUi
@@ -91,13 +79,13 @@ fun Exchanges() {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.8f)
+                        .fillMaxHeight(1f)
                         .padding(paddingValues),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
 
 //             ТУТ КАРТОЧКИ
-                    item {
+                    items (vmExchanges.listOfCards) { exchange ->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -123,7 +111,7 @@ fun Exchanges() {
                                         modifier = Modifier.fillMaxSize()
                                     ) {
                                         val base64image =
-                                            Base64.decode(card1.imageUri, Base64.DEFAULT)
+                                            Base64.decode(exchange.acceptedUri, Base64.DEFAULT)
                                         val bitmap = BitmapFactory.decodeByteArray(
                                             base64image,
                                             0,
@@ -160,19 +148,19 @@ fun Exchanges() {
                                             modifier = Modifier.padding(top = 10.dp)
                                         ) {
                                             Text(
-                                                text = card1.name.replaceFirstChar { it.uppercaseChar() },
+                                                text = exchange.acceptedName.replaceFirstChar { it.uppercaseChar() },
                                                 color = backgroundColorPurple1,
                                                 fontSize = 27.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = "Category: ${card1.category}",
+                                                text = "Category: ${exchange.acceptedCategory}",
                                                 color = backgroundColorPurple3,
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = card1.description.replaceFirstChar { it.uppercaseChar() },
+                                                text = exchange.acceptedDescription.replaceFirstChar { it.uppercaseChar() },
                                                 color = backgroundColorPurple3,
                                                 fontSize = 15.sp
                                             )
@@ -221,7 +209,7 @@ fun Exchanges() {
                                         modifier = Modifier.fillMaxSize()
                                     ) {
                                         val base64image =
-                                            Base64.decode(card2.imageUri, Base64.DEFAULT)
+                                            Base64.decode(exchange.imageUriOther, Base64.DEFAULT)
                                         val bitmap = BitmapFactory.decodeByteArray(
                                             base64image,
                                             0,
@@ -258,19 +246,19 @@ fun Exchanges() {
                                             modifier = Modifier.padding(top = 10.dp)
                                         ) {
                                             Text(
-                                                text = card2.name.replaceFirstChar { it.uppercaseChar() },
+                                                text = exchange.nameOther.replaceFirstChar { it.uppercaseChar() },
                                                 color = backgroundColorPurple1,
                                                 fontSize = 27.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = "Category: ${card2.category}",
+                                                text = "Category: ${exchange.categoryOther}",
                                                 color = backgroundColorPurple3,
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = card2.description.replaceFirstChar { it.uppercaseChar() },
+                                                text = exchange.descriptionOther.replaceFirstChar { it.uppercaseChar() },
                                                 color = backgroundColorPurple3,
                                                 fontSize = 15.sp
                                             )
