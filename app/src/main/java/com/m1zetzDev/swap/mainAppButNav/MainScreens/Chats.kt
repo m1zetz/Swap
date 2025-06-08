@@ -138,6 +138,7 @@ fun Chats(
                                     .padding(10.dp)
                                     .height(height = 100.dp)
                                     .clickable {
+                                        vmChats.getMessages(vmChats.currentEmail!!, otherUserEmail)
                                         vmChats.selectUserForChat(otherUserEmail, imageBase64)
                                         navController.navigate("chat_screen")
                                     }
@@ -214,18 +215,27 @@ fun ChatScreen(
     vmChats: ChatsViewModel
 ) {
     val navBarHeight = WindowInsets.navigationBars.getBottom(LocalDensity.current)
+    val messages = vmChats.messagesList
 
-    val messages = remember { List(1) { "Message #$it" } }
     val listState = rememberLazyListState()
-
-    LaunchedEffect(messages.size) {
-        listState.scrollToItem(messages.lastIndex)
+    LaunchedEffect(vmChats.otherEmail.value) {
+        vmChats.getMessages(vmChats.currentEmail ?: return@LaunchedEffect, vmChats.otherEmail.value)
     }
+    LaunchedEffect(messages.size) {
+        if (messages.isNotEmpty()) {
+            delay(100) // Опционально: дать время списку построиться
+            listState.animateScrollToItem(messages.lastIndex)
+        }
+    }
+    if (vmChats.otherEmail.value.isBlank()) {
+        Log.e("ChatScreen", "otherEmail is blank")
+        return
+    }
+
     Column(Modifier.background(lightBlue)) {
 
         //ебучая карточка
         cardChat(vmChats.otherUri.value, vmChats.otherEmail.value)
-        Log.d("o,[fq", "${vmChats.otherUri.value} вмцфмфцфмцумцумцмцум ${vmChats.otherEmail.value}")
 
 
         Box(Modifier.fillMaxSize()) {
@@ -235,9 +245,10 @@ fun ChatScreen(
                     .fillMaxWidth(),
                 state = listState
             ) {
-                items(messages) { message ->
+                items(vmChats.messagesList) { messages ->
+                    val isMyMessage = messages.senderId == vmChats.currentEmail
 
-                    Row(horizontalArrangement = Arrangement.Start,
+                    Row(horizontalArrangement = if (isMyMessage) Arrangement.End else Arrangement.Start,
                         modifier = Modifier.padding(8.dp)) {
                         Card(
                             shape = RoundedCornerShape(8.dp),
@@ -245,7 +256,7 @@ fun ChatScreen(
                                 .wrapContentWidth()
                                 .widthIn(max = 280.dp)) {
 
-                            Text("fdddddddddFFFfFFF",
+                            Text(messages.text,
                                 modifier = Modifier.padding(8.dp),
                                 fontSize = 20.sp,
                                 color = backgroundColorPurple1)
@@ -258,6 +269,8 @@ fun ChatScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ) {
+                val currentEmail = Firebase.auth.currentUser?.email
+
                 Row {
                     //ВВОД СООБЩЕНИЯ
                     TextField(
@@ -267,7 +280,8 @@ fun ChatScreen(
                             .weight(1f)
                             .padding(bottom = IntPixelsToDp(navBarHeight)),
                         shape = RectangleShape)
-                    Button(onClick = {vmChats.sendMessage(vmChats.currentEmail.toString(), vmChats.otherEmail.value)}) {
+                    Button(onClick = {vmChats.sendMessage(vmChats.currentEmail.toString(), vmChats.otherEmail.value)
+                    }) {
                         Image(Icons.Default.PlayArrow, contentDescription = "", Modifier.size(56.dp))
                     }
                 }

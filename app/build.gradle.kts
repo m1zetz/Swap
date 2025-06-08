@@ -18,6 +18,7 @@ android {
     defaultConfig {
         applicationId = "com.m1zetzDev.swap"
         minSdk = 24
+
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -47,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-database-ktx")
     implementation("androidx.compose.material:material:1.9.0-alpha03")
     implementation ("androidx.graphics:graphics-shapes:1.0.1")
     implementation("io.coil-kt:coil-compose:2.4.0")

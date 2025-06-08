@@ -7,7 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -23,9 +26,8 @@ class ChatsViewModel : ViewModel() {
 
     val currentEmail = Firebase.auth.currentUser?.email
 
-
+    var messageText by mutableStateOf(TextField())
     val otherEmail = mutableStateOf("")
-
     val otherUri = mutableStateOf("")
 
     fun selectUserForChat(email: String, uri: String) {
@@ -33,21 +35,77 @@ class ChatsViewModel : ViewModel() {
         otherUri.value = uri
     }
 
-    fun sendMessage(currentEmail: String, otherEmail: String){
-
+    fun createChatId(currentEmail: String, otherEmail: String) : String{
         val modifiedCurrentEmail = currentEmail.replace(".","_")
         val modifiedCOtherEmail = otherEmail.replace(".","_")
-        val checkId = "${modifiedCurrentEmail}_${modifiedCOtherEmail}"
+        val sorted = listOf(modifiedCurrentEmail, modifiedCOtherEmail).sorted()
+        return "${sorted[0]}_${sorted[1]}"
+    }
 
-        database.child("chats").child("userA_userB").setValue(checkId)
+    fun sendMessage(currentEmail: String, otherEmail: String){
+
+        val message = messageText.value.trim()
+        if (message.isBlank()) return
+
+        messageText = messageText.copy(value = "")
+
+        val chatId = createChatId(currentEmail, otherEmail)
+
+        val messageData = mapOf(
+            "senderId" to currentEmail,
+            "text" to message,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        database
+            .child("chats")
+            .child(chatId)
+            .child("messages")
+            .push()
+            .setValue(messageData)
+            .addOnSuccessListener {
+                Log.d("ChatsViewModel", "Message sent")
+                getMessages(currentEmail, otherEmail)
+            }
+            .addOnFailureListener {
+                Log.e("ChatsViewModel", "Failed to send message: ${it.message}")
+            }
+
+
 
     }
 
-    fun getMessages(){
+    val messagesList = mutableStateListOf<ChatMessage>()
+
+    fun getMessages(currentEmail: String, otherEmail: String){
+        val chatId = createChatId(currentEmail, otherEmail)
+
+        database.child("chats").child(chatId).child("messages")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("ChatsViewModel", "onDataChange triggered. Children count: ${snapshot.childrenCount}")
+                    messagesList.clear()
+                    for (msgSnapshot in snapshot.children) {
+                        val sender = msgSnapshot.child("senderId").getValue(String::class.java) ?: ""
+                        val message = msgSnapshot.child("text").getValue(String::class.java) ?: ""
+                        val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java) ?: 0L
+
+                        Log.d("ChatsViewModel", "Message loaded: $sender - $message")
+
+                        messagesList.add(ChatMessage(sender, message, timestamp))
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("ChatsViewModel", "Failed to load messages: ${error.message}")
+                }
+            })
+
 
     }
 
-    var messageText by mutableStateOf(TextField())
+
+
 
     fun obtainEvent(enterEvent: EnterEvent){
         when(enterEvent){
@@ -94,7 +152,11 @@ class ChatsViewModel : ViewModel() {
 
 
 }
-
+data class ChatMessage(
+    val senderId: String,
+    val text: String,
+    val timestamp: Long
+)
 sealed class EnterEvent() {
     class OnChangeMessage(val message: String) : EnterEvent()
 }
