@@ -25,4 +25,4 @@ val lightGreen = Color(0xFF73E77C)
 val lightRed = Color(0xFFEC8686)
 val blue = Color.Blue
 val bluePink = Color(0xFF9879C2)
-val darkGray = Color(0xFF93B2C2)
+val lightBlue = Color(0xFF93B2C2)

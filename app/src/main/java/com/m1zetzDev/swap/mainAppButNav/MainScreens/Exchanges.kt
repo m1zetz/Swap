@@ -16,12 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -43,11 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.m1zetzDev.swap.R
-import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ExchangeCard
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ExchangesViewModel
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
-import com.m1zetzDev.swap.ui.theme.darkGray
+import com.m1zetzDev.swap.ui.theme.lightBlue
 import com.m1zetzDev.swap.ui.theme.lightGreen
 import com.m1zetzDev.swap.ui.theme.lightRed
 import com.m1zetzDev.swap.ui.theme.whiteForUi
@@ -92,7 +88,7 @@ fun Exchanges() {
                                 .padding(10.dp)
                                 .height(height = 450.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = darkGray,
+                                containerColor = lightBlue,
 
                                 )
                         ) {
@@ -154,16 +150,17 @@ fun Exchanges() {
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = "Category: ${exchange.acceptedCategory}",
+                                                text = "Category: ${exchange.acceptedDescription}",
                                                 color = backgroundColorPurple3,
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = exchange.acceptedDescription.replaceFirstChar { it.uppercaseChar() },
+                                                text = exchange.acceptedCategory.replaceFirstChar { it.uppercaseChar() },
                                                 color = backgroundColorPurple3,
                                                 fontSize = 15.sp
                                             )
+
                                         }
                                     }
                                 }
@@ -268,7 +265,7 @@ fun Exchanges() {
                                 Spacer(modifier = Modifier.size(5.dp))
                                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                                     Button(
-                                        onClick = {}, colors = ButtonColors(
+                                        onClick = {vmExchanges.acceptExchange(exchange)}, colors = ButtonColors(
                                             containerColor = lightGreen,
                                             contentColor = whiteForUi,
                                             disabledContainerColor = lightGreen,

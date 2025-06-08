@@ -20,8 +20,13 @@ import com.m1zetzDev.swap.auth.SignUpViewModel
 import com.m1zetzDev.swap.auth.screens.ScreenSignIn
 import com.m1zetzDev.swap.auth.screens.ScreenSignUp
 import com.m1zetzDev.swap.mainAppButNav.AppBottomNavigation
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ChatsViewModel
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.EnterEvent
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Settings
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.ChatScreen
+
+
 
 
 class MainActivityNavigation : ComponentActivity() {
@@ -39,6 +44,7 @@ class MainActivityNavigation : ComponentActivity() {
             val vmSignIn: SignInViewModel = viewModel()
             val vmSignUp: SignUpViewModel = viewModel()
             val vmSettings: SettingsViewModel = viewModel()
+            val vmChats: ChatsViewModel = viewModel()
 
             enableEdgeToEdge()
 
@@ -120,7 +126,9 @@ class MainActivityNavigation : ComponentActivity() {
                 }
                 composable("main_window_screen") {
                     AppBottomNavigation(
-                        signOut = { performSignOut() }
+                        signOut = { performSignOut() },
+                        navController = navController,
+                        vmChats = vmChats
                     )
                 }
                 composable("settings_bottom_sheet") {
@@ -128,6 +136,16 @@ class MainActivityNavigation : ComponentActivity() {
                         signOut = { performSignOut() },
                         onDismiss = { vmSettings.showBottomSheet = false },
                         viewModel = vmSettings
+                    )
+                }
+                composable("chat_screen") {
+                    ChatScreen(
+                        messageTextField = vmChats.messageText,
+                        onChangeMessage = { message ->
+                            vmChats.obtainEvent((EnterEvent.OnChangeMessage(message)))
+                        },
+                        vmChats = vmChats
+
                     )
                 }
 

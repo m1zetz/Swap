@@ -84,8 +84,6 @@ class RibbonViewModel : ViewModel() {
     ) {
 
         val acceptedUserEmail = Firebase.auth.currentUser?.email
-
-
         val userEmailOther = emailOther
         val imageUriOther = uriOther
 
@@ -128,5 +126,6 @@ data class ToExchange(
     val nameOther: String = "",
     val descriptionOther: String = "",
     val categoryOther: String = "",
-    val imageUriOther: String = ""
+    val imageUriOther: String = "",
+
 )

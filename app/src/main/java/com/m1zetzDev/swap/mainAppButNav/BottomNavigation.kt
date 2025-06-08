@@ -1,9 +1,5 @@
 package com.m1zetzDev.swap.mainAppButNav
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,13 +13,13 @@ import androidx.compose.material3.Scaffold
 
 import androidx.compose.runtime.Composable
 
-import androidx.compose.runtime.mutableIntStateOf
-
 
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ChatsViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavigationViewModel
 
@@ -40,7 +36,7 @@ import com.m1zetzDev.swap.ui.theme.transparent
 
 
 @Composable
-fun AppBottomNavigation(signOut: () -> Unit) {
+fun AppBottomNavigation(signOut: () -> Unit, navController: NavController, vmChats: ChatsViewModel) {
 
     val listItems = listOf(
         BottomItem.myItems_Home,
@@ -86,7 +82,7 @@ fun AppBottomNavigation(signOut: () -> Unit) {
                 }
             }
         }) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding), vmBottomNavigation.currentScreenIndex)
+        ContentScreen(modifier = Modifier.padding(innerPadding), vmBottomNavigation.currentScreenIndex,  navController = navController, vmChats = vmChats)
         if (vmSettings.showBottomSheet) {
             Log.d("", "попал в условие")
             Settings(
@@ -101,10 +97,10 @@ fun AppBottomNavigation(signOut: () -> Unit) {
 
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
+fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, navController: NavController, vmChats: ChatsViewModel) {
     when (selectedIndex) {
         0 -> HomePage()
-        1 -> Chats()
+        1 -> Chats(navController = navController , vmChats)
         2 -> Ribbon()
         3 -> Exchanges()
     }

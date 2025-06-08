@@ -91,6 +91,7 @@ import java.io.ByteArrayOutputStream
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
 
 
@@ -115,7 +116,7 @@ fun HomePage(
                         titleContentColor = whiteForUi
                     ),
                     actions = {
-                        IconButton(onClick = {vmAddItem.getData()}) {
+                        IconButton(onClick = { vmAddItem.getData() }) {
                             Icon(Icons.Filled.Refresh, contentDescription = "")
                         }
                     }
@@ -142,7 +143,10 @@ fun HomePage(
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                 ),
-                                modifier = Modifier.fillMaxWidth().padding(10.dp).height(height = 140.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .height(height = 140.dp)
                             ) {
                                 Row(
                                     horizontalArrangement = Arrangement.Start,
@@ -154,13 +158,18 @@ fun HomePage(
                                         0,
                                         base64image.size
                                     )
-                                    Column(verticalArrangement = Arrangement.Center,
-                                        horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
                                         if (bitmap != null) {
                                             AsyncImage(
                                                 model = bitmap,
                                                 contentDescription = "",
-                                                modifier = Modifier.size(140.dp).padding(all = 10.dp).clip(shape = RoundedCornerShape(10.dp)),
+                                                modifier = Modifier
+                                                    .size(140.dp)
+                                                    .padding(all = 10.dp)
+                                                    .clip(shape = RoundedCornerShape(10.dp)),
                                                 contentScale = ContentScale.Crop,
 
                                                 )
@@ -168,14 +177,18 @@ fun HomePage(
                                             Image(
                                                 painter = painterResource(id = R.drawable.icon_camera),
                                                 null,
-                                                modifier = Modifier.size(140.dp).padding(10.dp)
+                                                modifier = Modifier
+                                                    .size(140.dp)
+                                                    .padding(10.dp)
                                             )
                                         }
                                     }
 
-                                    Column(verticalArrangement = Arrangement.Top,
+                                    Column(
+                                        verticalArrangement = Arrangement.Top,
                                         horizontalAlignment = Alignment.Start,
-                                        modifier = Modifier.padding(top = 10.dp)) {
+                                        modifier = Modifier.padding(top = 10.dp)
+                                    ) {
                                         // name
                                         Text(
                                             text = cards.name.replaceFirstChar { it.uppercaseChar() },
@@ -254,6 +267,23 @@ fun HomePage(
     }
 }
 
+
+@Composable
+fun DialogError(dialogState: Boolean) {
+    var dialogState = remember { mutableStateOf(false) }
+    AlertDialog(                                                                    //ДИАЛОГ
+        onDismissRequest = { dialogState.value = false },
+        title = { Text("Filling error") },
+        text = { Text("Please fill in all fields!") },
+        confirmButton = {
+            Button(
+                onClick = { dialogState.value = false },
+            ){
+                Text("Close")
+            }
+        }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

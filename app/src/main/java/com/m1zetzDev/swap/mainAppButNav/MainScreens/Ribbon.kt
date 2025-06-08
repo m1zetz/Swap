@@ -295,8 +295,8 @@ fun Ribbon() {
                     vmRibbon.stateOfBotttomSheet = false
                     vmRibbon.sendData(
                         selectedCard.name,
-                        selectedCard.category,
                         selectedCard.description,
+                        selectedCard.category,
                         selectedCard.imageUri
 
                     )
