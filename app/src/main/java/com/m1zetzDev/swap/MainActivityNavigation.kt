@@ -59,7 +59,7 @@ class MainActivityNavigation : ComponentActivity() {
 
             NavHost(
                 navController = navController,
-                startDestination = mainWindowScreen
+                startDestination = screenSignIn
             ) {
                 composable("screen_sign_in") {
 

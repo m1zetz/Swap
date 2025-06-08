@@ -20,11 +20,11 @@ import com.m1zetzDev.swap.common.TextField
 const val SUCCESSFUL_EXCHANGES = "successfulExchanges"
 
 class ChatsViewModel : ViewModel() {
-    val database = Firebase.database.reference
+    val database = FirebaseDatabase.getInstance("https://swapdb-85cd5-default-rtdb.europe-west1.firebasedatabase.app/")
 
     val fireBase = Firebase.firestore
 
-    val currentEmail = Firebase.auth.currentUser?.email
+    var currentEmail: String? = null
 
     var messageText by mutableStateOf(TextField())
     val otherEmail = mutableStateOf("")
@@ -35,6 +35,10 @@ class ChatsViewModel : ViewModel() {
         otherUri.value = uri
     }
 
+    fun updateCurrentEmail() {
+        currentEmail = Firebase.auth.currentUser?.email
+    }
+
     fun createChatId(currentEmail: String, otherEmail: String) : String{
         val modifiedCurrentEmail = currentEmail.replace(".","_")
         val modifiedCOtherEmail = otherEmail.replace(".","_")
@@ -43,9 +47,10 @@ class ChatsViewModel : ViewModel() {
     }
 
     fun sendMessage(currentEmail: String, otherEmail: String){
-
         val message = messageText.value.trim()
-        if (message.isBlank()) return
+        if (message.isBlank()){
+            return
+        }
 
         messageText = messageText.copy(value = "")
 
@@ -57,22 +62,11 @@ class ChatsViewModel : ViewModel() {
             "timestamp" to System.currentTimeMillis()
         )
 
-        database
-            .child("chats")
+        database.getReference("chats")
             .child(chatId)
             .child("messages")
             .push()
             .setValue(messageData)
-            .addOnSuccessListener {
-                Log.d("ChatsViewModel", "Message sent")
-                getMessages(currentEmail, otherEmail)
-            }
-            .addOnFailureListener {
-                Log.e("ChatsViewModel", "Failed to send message: ${it.message}")
-            }
-
-
-
     }
 
     val messagesList = mutableStateListOf<ChatMessage>()
@@ -80,7 +74,7 @@ class ChatsViewModel : ViewModel() {
     fun getMessages(currentEmail: String, otherEmail: String){
         val chatId = createChatId(currentEmail, otherEmail)
 
-        database.child("chats").child(chatId).child("messages")
+        database.getReference("chats").child(chatId).child("messages")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     Log.d("ChatsViewModel", "onDataChange triggered. Children count: ${snapshot.childrenCount}")

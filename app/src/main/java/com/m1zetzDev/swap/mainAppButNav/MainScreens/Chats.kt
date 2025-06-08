@@ -75,7 +75,7 @@ fun Chats(
     vmChats: ChatsViewModel
 ) {
 
-
+    vmChats.updateCurrentEmail()
     LaunchedEffect(Unit) {
         vmChats.getAllMySuccessfulExchanges()
     }
@@ -125,8 +125,7 @@ fun Chats(
                                 cards.acceptedUri
                             }
 
-                            vmChats.otherEmail.value = otherUserEmail
-                            vmChats.otherUri.value = imageBase64
+
 
 
                             Card(
@@ -218,12 +217,10 @@ fun ChatScreen(
     val messages = vmChats.messagesList
 
     val listState = rememberLazyListState()
-    LaunchedEffect(vmChats.otherEmail.value) {
-        vmChats.getMessages(vmChats.currentEmail ?: return@LaunchedEffect, vmChats.otherEmail.value)
-    }
+
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
-            delay(100) // Опционально: дать время списку построиться
+            delay(100)
             listState.animateScrollToItem(messages.lastIndex)
         }
     }
@@ -300,7 +297,6 @@ fun IntPixelsToDp(px: Int): Dp {
 
 @Composable
 fun cardChat(imageBase64:String, otherUserEmail: String){
-
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
