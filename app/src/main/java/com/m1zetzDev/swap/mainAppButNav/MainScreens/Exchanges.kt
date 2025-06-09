@@ -277,7 +277,7 @@ fun Exchanges() {
                                         Text(stringResource(R.string.accept), textAlign = TextAlign.Center)
                                     }
                                     Button(
-                                        onClick = {}, colors = ButtonColors(
+                                        onClick = {vmExchanges.reject(exchange)}, colors = ButtonColors(
                                             containerColor = lightRed,
                                             contentColor = whiteForUi,
                                             disabledContainerColor = lightRed,

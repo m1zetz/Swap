@@ -120,8 +120,6 @@ fun Chats(
                             }
 
 
-
-
                             Card(
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.surfaceVariant,

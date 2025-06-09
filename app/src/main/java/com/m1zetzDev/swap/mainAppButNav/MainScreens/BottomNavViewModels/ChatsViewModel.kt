@@ -114,6 +114,7 @@ class ChatsViewModel : ViewModel() {
 
 
     fun getAllMySuccessfulExchanges() {
+        listOfCardsUsers.clear()
         val myId = Firebase.auth.currentUser?.uid ?: return
 
         val allResults = mutableListOf<ExchangesViewModel.Exchanges>()
@@ -130,7 +131,7 @@ class ChatsViewModel : ViewModel() {
                     .addOnSuccessListener { otherResult ->
                         allResults.addAll(otherResult.toObjects(ExchangesViewModel.Exchanges::class.java))
 
-                        listOfCardsUsers.clear()
+
                         listOfCardsUsers.addAll(allResults)
                     }
                     .addOnFailureListener {

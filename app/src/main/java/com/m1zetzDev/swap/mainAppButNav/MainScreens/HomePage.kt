@@ -5,7 +5,10 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Base64
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -96,6 +99,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.res.stringResource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -306,19 +310,30 @@ fun AddItemWindow(
                 .heightIn(min = 800.dp, max = 1500.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            val launcher =
-                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                    vmAddItem.messageUri = uri
-                }
+
 
             Spacer(modifier = Modifier.size(10.dp))
             Row(
-                horizontalArrangement = Arrangement.SpaceAround,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 //Enter photo
+                val context = LocalContext.current
+                val cv = context.contentResolver
+
+                val launcher =
+                    rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                        vmAddItem.messageUri = uri
+                        if (uri != null) {
+                            vmAddItem.bitmap = vmAddItem.getBitmapFromUri(context, uri)
+                        } else {
+                            vmAddItem.bitmap = null
+                        }
+
+                    }
+
 
                 Button(
                     modifier = Modifier.size(130.dp),
@@ -340,6 +355,28 @@ fun AddItemWindow(
 
                 }
 
+                //Тут должна быть сгенерина картинка
+
+                if (vmAddItem.bitmap != null) {
+                    AsyncImage(
+                        model = vmAddItem.bitmap,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(130.dp)
+                            .padding(all = 10.dp)
+                            .clip(shape = RoundedCornerShape(10.dp)),
+                        contentScale = ContentScale.Crop,
+
+                        )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.icon_camera),
+                        null,
+                        modifier = Modifier
+                            .size(130.dp)
+                            .padding(10.dp)
+                    )
+                }
 
                 //SendData
 

@@ -1,9 +1,13 @@
 package com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels
 
 import android.content.ContentResolver
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -27,6 +31,8 @@ class HomeAddItemViewModel : ViewModel() {
 
 
     val fireBase = Firebase.firestore
+
+    var bitmap by mutableStateOf<Bitmap?>(null)
 
     var stateAddItem by mutableStateOf(false)
 
@@ -68,6 +74,20 @@ class HomeAddItemViewModel : ViewModel() {
                 )
             }
 
+        }
+    }
+
+    fun getBitmapFromUri(context: Context, uri: Uri): Bitmap? {
+        return try {
+            if (Build.VERSION.SDK_INT < 28) {
+                MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+            } else {
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 

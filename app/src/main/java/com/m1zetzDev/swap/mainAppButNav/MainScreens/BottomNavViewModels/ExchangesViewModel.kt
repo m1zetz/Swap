@@ -16,6 +16,44 @@ class ExchangesViewModel : ViewModel() {
     val fireBase = Firebase.firestore
     var listOfCards by mutableStateOf(emptyList<Exchanges>())
 
+    fun reject(exchange: Exchanges){
+
+        val myIdOther = exchange.userIdOther
+        val nameOther = exchange.nameOther
+        val descriptionOther = exchange.descriptionOther
+        val categoryOther = exchange.categoryOther
+
+        val acceptedId = exchange.acceptedId
+        val acceptedName = exchange.acceptedName
+        val acceptedDescription = exchange.acceptedDescription
+        val acceptedCategory = exchange.acceptedCategory
+
+        Firebase.firestore.collection("cardstoexchange")
+            .whereEqualTo("userIdOther", myIdOther)
+            .whereEqualTo("nameOther", nameOther)
+            .whereEqualTo("descriptionOther", descriptionOther)
+            .whereEqualTo("categoryOther", categoryOther)
+
+            .whereEqualTo("acceptedId", acceptedId)
+            .whereEqualTo("acceptedName", acceptedName)
+            .whereEqualTo("acceptedDescription", acceptedDescription)
+            .whereEqualTo("acceptedCategory", acceptedCategory)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val batch = Firebase.firestore.batch()
+                    for (document in querySnapshot.documents) {
+                        batch.delete(document.reference)
+                    }
+                    batch.commit()
+                } else {
+                    println("Документы, соответствующие запросу, не найдены.")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Ошибка при выполнении запроса: $e")
+            }
+        }
 
     fun getMyData() {
         val myId = Firebase.auth.currentUser?.uid
@@ -30,6 +68,58 @@ class ExchangesViewModel : ViewModel() {
     }
 
     fun acceptExchange(exchange: Exchanges) {
+        val myIdOther = exchange.userIdOther
+        val nameOther = exchange.nameOther
+        val descriptionOther = exchange.descriptionOther
+        val categoryOther = exchange.categoryOther
+
+        val acceptedId = exchange.acceptedId
+        val acceptedName = exchange.acceptedName
+        val acceptedDescription = exchange.acceptedDescription
+        val acceptedCategory = exchange.acceptedCategory
+
+        Firebase.firestore.collection("cards")
+            .whereEqualTo("user_id", myIdOther)
+            .whereEqualTo("name", nameOther)
+            .whereEqualTo("description", descriptionOther)
+            .whereEqualTo("category", categoryOther)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val batch = Firebase.firestore.batch()
+                    for (document in querySnapshot.documents) {
+                        batch.delete(document.reference)
+                    }
+                    batch.commit()
+                } else {
+                    println("Документы, соответствующие запросу, не найдены.")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Ошибка при выполнении запроса: $e")
+            }
+
+        Firebase.firestore.collection("cards")
+            .whereEqualTo("user_id", acceptedId)
+            .whereEqualTo("name", acceptedName)
+            .whereEqualTo("description", acceptedDescription)
+            .whereEqualTo("category", acceptedCategory)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val batch = Firebase.firestore.batch()
+                    for (document in querySnapshot.documents) {
+                        batch.delete(document.reference)
+                    }
+                    batch.commit()
+                } else {
+                    println("Документы, соответствующие запросу, не найдены.")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Ошибка при выполнении запроса: $e")
+            }
+
         Firebase.firestore.collection("successfulExchanges")
             .add(exchange)
             .addOnSuccessListener {
@@ -37,7 +127,9 @@ class ExchangesViewModel : ViewModel() {
             .addOnFailureListener {
                 Log.e("Firebase", "Ошибка при сохранении обмена", it)
             }
+
     }
+
 
 
     data class Exchanges(
