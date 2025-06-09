@@ -246,7 +246,7 @@ fun ChatScreen(
                     val isMyMessage = messages.senderId == vmChats.currentEmail
 
                     Row(horizontalArrangement = if (isMyMessage) Arrangement.End else Arrangement.Start,
-                        modifier = Modifier.padding(8.dp)) {
+                        modifier = Modifier.padding(8.dp).fillMaxWidth()) {
                         Card(
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier

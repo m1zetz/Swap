@@ -155,11 +155,4 @@ sealed class EnterEvent() {
     class OnChangeMessage(val message: String) : EnterEvent()
 }
 
-data class Chats(
-    val userEmail1: String = "",
-    val userEmail2: String = "",
 
-    val messageEmail1: String = "",
-    val messageEmail2: String = ""
-
-)
