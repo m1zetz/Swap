@@ -221,7 +221,6 @@ fun ChatScreen(
 
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
-            delay(100)
             listState.animateScrollToItem(messages.lastIndex)
         }
     }

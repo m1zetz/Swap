@@ -1,6 +1,8 @@
 package com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels
 
 import android.content.ContentResolver
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
@@ -17,11 +19,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.m1zetzDev.swap.auth.screens.auth5
+import java.io.ByteArrayOutputStream
 
 const val CARDS_COLLECTION = "cards"
 
 class HomeAddItemViewModel : ViewModel() {
-
 
 
     val fireBase = Firebase.firestore
@@ -69,32 +71,22 @@ class HomeAddItemViewModel : ViewModel() {
         }
     }
 
-    fun getData(){
-        fireBase.collection(CARDS_COLLECTION).get().addOnCompleteListener{ task ->
-            if(task.isSuccessful){
-                listOfCards = task.result.toObjects(Cards::class.java)
-            }
-            else{
-                Log.d("msg", "данные не получены")
-            }
-        }
-    }
 
-    fun getMyData(){
-        val uid = Firebase.auth.currentUser?.uid?: return
-        fireBase.collection(CARDS_COLLECTION).whereEqualTo("user_id", uid).get().addOnCompleteListener{ task ->
-            if(task.isSuccessful){
-                listOfMyCards = task.result.toObjects(Cards::class.java)
+    fun getMyData() {
+        val uid = Firebase.auth.currentUser?.uid ?: return
+        fireBase.collection(CARDS_COLLECTION).whereEqualTo("user_id", uid).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    listOfMyCards = task.result.toObjects(Cards::class.java)
+                } else {
+                    Log.d("msg", "данные не получены")
+                }
             }
-            else{
-                Log.d("msg", "данные не получены")
-            }
-        }
     }
 
     fun sendData(contentResolver: ContentResolver) {
 
-        val uid = Firebase.auth.currentUser?.uid?: return
+        val uid = Firebase.auth.currentUser?.uid ?: return
         val uri = messageUri
         val userEmail = Firebase.auth.currentUser?.email
 
@@ -121,15 +113,18 @@ class HomeAddItemViewModel : ViewModel() {
         }
     }
 
-   fun imageToBase64(uri: Uri, contentResolver: ContentResolver): String {
+    fun imageToBase64(uri: Uri, contentResolver: ContentResolver): String {
         val inputStream = contentResolver.openInputStream(uri)
-        val bytes = inputStream?.readBytes()
-        return bytes?.let {
-            Base64.encodeToString(it, Base64.DEFAULT)
-        } ?: ""
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream) // 50% качество
+        val bytes = outputStream.toByteArray()
+        inputStream?.close()
+        Log.d("msg","Compressed size in bytes: ${bytes.size}")
+        return Base64.encodeToString(bytes, Base64.NO_WRAP)
     }
 }
-
 
 
 data class Cards(

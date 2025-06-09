@@ -94,6 +94,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.res.stringResource
+import com.google.firebase.firestore.FirebaseFirestore
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
 
 
@@ -103,6 +104,8 @@ import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
 fun HomePage(
     vmAddItem: HomeAddItemViewModel
 ) {
+
+    FirebaseFirestore.getInstance().clearPersistence() // Очищает локальные данные
 
     LaunchedEffect(Unit) {
         vmAddItem.getMyData()
