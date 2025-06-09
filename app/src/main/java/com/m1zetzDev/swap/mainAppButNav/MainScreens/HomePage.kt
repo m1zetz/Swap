@@ -92,6 +92,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.res.stringResource
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
 
 
@@ -99,9 +101,8 @@ import com.m1zetzDev.swap.ui.theme.backgroundColorPurple3
 @SuppressLint("RememberReturnType")
 @Composable
 fun HomePage(
+    vmAddItem: HomeAddItemViewModel
 ) {
-
-    val vmAddItem: HomeAddItemViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         vmAddItem.getMyData()
@@ -110,16 +111,11 @@ fun HomePage(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("My Announcements", fontSize = 22.sp) },
+                    title = { Text(stringResource(R.string.my_announcements), fontSize = 22.sp) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorPurple1,
                         titleContentColor = whiteForUi
-                    ),
-                    actions = {
-                        IconButton(onClick = { vmAddItem.getData() }) {
-                            Icon(Icons.Filled.Refresh, contentDescription = "")
-                        }
-                    }
+                    )
                 )
             },
             content = { paddingValues ->
@@ -199,7 +195,7 @@ fun HomePage(
                                         )
                                         //category
                                         Text(
-                                            text = "Category: ${cards.category}",
+                                            text = "${stringResource(R.string.category)}: ${cards.category}",
                                             modifier = Modifier,
                                             color = backgroundColorPurple3,
                                             fontSize = 18.sp,
@@ -245,7 +241,7 @@ fun HomePage(
                     containerColor = backgroundColorPurple1
                 )
             ) {
-                Text("Add item")
+                Text(stringResource(R.string.add_item))
             }
 
         }
@@ -260,34 +256,21 @@ fun HomePage(
                 descriptionTextField = vmAddItem.messageDescription,
                 onChangeDescription = { description ->
                     vmAddItem.obtainEvent(FieldsState.onChangeDescription(description))
-                }
-
+                },
+                vmAddItem = vmAddItem
             )
         }
     }
 }
 
 
-@Composable
-fun DialogError(dialogState: Boolean) {
-    var dialogState = remember { mutableStateOf(false) }
-    AlertDialog(                                                                    //ДИАЛОГ
-        onDismissRequest = { dialogState.value = false },
-        title = { Text("Filling error") },
-        text = { Text("Please fill in all fields!") },
-        confirmButton = {
-            Button(
-                onClick = { dialogState.value = false },
-            ){
-                Text("Close")
-            }
-        }
-    )
-}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemWindow(
+    vmAddItem: HomeAddItemViewModel,
     state: Boolean,
     onDismiss: () -> Unit,
     onChangeName: (name: String) -> Unit,
@@ -295,7 +278,6 @@ fun AddItemWindow(
     nameTextField: TextField,
     descriptionTextField: TextField,
 ) {
-    val vmAddItem: HomeAddItemViewModel = viewModel()
 
     val sheetState = rememberModalBottomSheetState()
 
@@ -324,7 +306,6 @@ fun AddItemWindow(
             val launcher =
                 rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                     vmAddItem.messageUri = uri
-//                    if (uri == null) return@rememberLauncherForActivityResult
                 }
 
             Spacer(modifier = Modifier.size(10.dp))
@@ -350,8 +331,8 @@ fun AddItemWindow(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text("Enter ", fontSize = 30.sp)
-                        Text("photo", fontSize = 30.sp)
+                        Text(stringResource(R.string.enter), fontSize = 30.sp)
+                        Text(stringResource(R.string.photo), fontSize = 30.sp)
                     }
 
                 }
@@ -363,16 +344,28 @@ fun AddItemWindow(
                     horizontalAlignment = Alignment.End,
                 ) {
                     Button(
-                        onClick = { vmAddItem.sendData(cv) },
+                        onClick = {
+                            if (nameTextField.value.isNotBlank() &&
+                                descriptionTextField.value.isNotBlank() &&
+                                vmAddItem.selectedText.isNotBlank()
+                            ) {
+                                vmAddItem.sendData(cv)
+                                vmAddItem.stateAddItem = false
+                            }
+                            else{
+                                vmAddItem.dialogState = true
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             contentColor = whiteForUi,
                             containerColor = green,
                         ),
                         shape = RoundedCornerShape(13.dp)
                     ) {
-                        Text("Add item")
+                        Text(stringResource(R.string.add_item))
                     }
                 }
+                DialogError(vmAddItem)
 
             }
 
@@ -391,7 +384,7 @@ fun AddItemWindow(
                 ),
                 label = {
                     Text(
-                        "Enter name",
+                        stringResource(R.string.enter_name),
                         color = backgroundColorPurple1,
                         fontWeight = FontWeight.Bold
                     )
@@ -424,7 +417,7 @@ fun AddItemWindow(
                     label = {
 
                         Text(
-                            "Enter description",
+                            stringResource(R.string.enter_description),
                             color = backgroundColorPurple1,
                             fontWeight = FontWeight.Bold
                         )
@@ -436,7 +429,7 @@ fun AddItemWindow(
 
 
                 Text(
-                    "Select category:",
+                    "${stringResource(R.string.select_category)}:",
                     modifier = Modifier.padding(horizontal = 10.dp),
                     fontSize = 23.sp,
                     color = backgroundColorPurple1,
@@ -446,7 +439,7 @@ fun AddItemWindow(
                 Spacer(modifier = Modifier.size(10.dp))
 
 
-                DropDownList()
+                DropDownList(vmAddItem)
 
 
                 Spacer(modifier = Modifier.size(10.dp))
@@ -458,33 +451,47 @@ fun AddItemWindow(
     }
 }
 
+@Composable
+fun DialogError(vmAddItem: HomeAddItemViewModel) {
+    if (vmAddItem.dialogState) {
+        AlertDialog(
+            onDismissRequest = { vmAddItem.dialogState = false },
+            title = { Text(stringResource(R.string.error_fill_title)) },
+            text = { Text(stringResource(R.string.error_fill_text)) },
+            confirmButton = {
+                Button(onClick = { vmAddItem.dialogState = false }) {
+                    Text(stringResource(R.string.close))
+                }
+            }
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropDownList() {
-
-    val vmAddItem: HomeAddItemViewModel = viewModel()
+fun DropDownList(vmAddItem: HomeAddItemViewModel) {
 
     val listOfCategories = listOf(
-        "Electronics",
-        "Appliances",
-        "Clothing & Shoes",
-        "Toys",
-        "Cars & Motorcycles",
-        "Food & Drinks",
-        "Books",
-        "Stationery",
-        "Furniture",
-        "Home & Garden",
-        "Beauty & Health",
-        "Sports & Outdoors",
-        "Pet Supplies",
-        "Accessories",
-        "Jewelry",
-        "Tools",
-        "Collectibles"
+        stringResource(R.string.category_electronics),
+        stringResource(R.string.category_appliances),
+        stringResource(R.string.category_clothing_shoes),
+        stringResource(R.string.category_toys),
+        stringResource(R.string.category_cars_motorcycles),
+        stringResource(R.string.category_food_drinks),
+        stringResource(R.string.category_books),
+        stringResource(R.string.category_stationery),
+        stringResource(R.string.category_furniture),
+        stringResource(R.string.category_home_garden),
+        stringResource(R.string.category_beauty_health),
+        stringResource(R.string.category_sports_outdoors),
+        stringResource(R.string.category_pet_supplies),
+        stringResource(R.string.category_accessories),
+        stringResource(R.string.category_jewelry),
+        stringResource(R.string.category_tools),
+        stringResource(R.string.category_collectibles)
     )
+
     var isExpanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -500,7 +507,7 @@ fun DropDownList() {
         ) {
             OutlinedTextField(
                 modifier = Modifier.menuAnchor(),
-                value = selectedText,
+                value = vmAddItem.selectedText,
                 onValueChange = {},
                 readOnly = true,
                 shape = RoundedCornerShape(18.dp),
@@ -527,7 +534,7 @@ fun DropDownList() {
                             )
                         },
                         onClick = {
-                            selectedText = listOfCategories[index]
+                            vmAddItem.selectedText = listOfCategories[index]
                             isExpanded = false
                             vmAddItem.messageCategory.value = category
                         },

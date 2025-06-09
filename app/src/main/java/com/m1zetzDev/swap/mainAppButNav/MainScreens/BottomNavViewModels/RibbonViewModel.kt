@@ -22,14 +22,9 @@ class RibbonViewModel : ViewModel() {
 
     val fireBase = Firebase.firestore
 
-    var messageUri by mutableStateOf("")
-    var messageName by mutableStateOf("")
-    var messageDescription by mutableStateOf("")           //my
-    var messageCategory by mutableStateOf("")
-
     var emailOther by mutableStateOf("")
     var uriOther by mutableStateOf("")
-    var nameOther by mutableStateOf("")                    //not my
+    var nameOther by mutableStateOf("")
     var descriptionOther by mutableStateOf("")
     var categoryOther by mutableStateOf("")
 
@@ -68,13 +63,6 @@ class RibbonViewModel : ViewModel() {
         }
     }
 
-    fun imageToBase64(uri: Uri, contentResolver: ContentResolver): String {
-        val inputStream = contentResolver.openInputStream(uri)
-        val bytes = inputStream?.readBytes()
-        return bytes?.let {
-            Base64.encodeToString(it, Base64.DEFAULT)
-        } ?: ""
-    }
 
     fun sendData(
         name: String,
@@ -85,17 +73,6 @@ class RibbonViewModel : ViewModel() {
 
         val acceptedUserEmail = Firebase.auth.currentUser?.email
         val userEmailOther = emailOther
-        val imageUriOther = uriOther
-
-
-        if (uri == null) {
-            Log.e("sendData", "Image URI is null. Item not sent.")
-            return
-        }
-        if (imageUriOther == null) {
-            Log.e("sendData", "Image URI is null. Item not sent.")
-            return
-        }
 
         fireBase.collection(CARDS_TO_EXCHANGE).document().set(
             ToExchange(

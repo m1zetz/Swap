@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import com.m1zetzDev.swap.common.TextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,9 @@ class HomeAddItemViewModel : ViewModel() {
     var messageCategory by mutableStateOf(TextField())
     var messageUri by mutableStateOf<Uri?>(null)
 
+    var dialogState by mutableStateOf(false)
+
+    var selectedText by mutableStateOf("")
 
     var listOfCards by mutableStateOf(emptyList<Cards>())
     var listOfMyCards by mutableStateOf(emptyList<Cards>())
@@ -107,7 +111,14 @@ class HomeAddItemViewModel : ViewModel() {
                 category = messageCategory.value,
                 imageUri = imageToBase64(uri, contentResolver)
             )
-        )
+        ).addOnSuccessListener {
+            getMyData()
+            stateAddItem = false
+            messageName.value = ""
+            messageDescription.value = ""
+            selectedText = ""
+            messageUri = null
+        }
     }
 
    fun imageToBase64(uri: Uri, contentResolver: ContentResolver): String {

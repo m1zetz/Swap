@@ -7,7 +7,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 
 class SettingsViewModel() : ViewModel() {
+
     var showBottomSheet by mutableStateOf(false)
+
+    var checkedLightTheme by mutableStateOf(true)
+
+    var checkedDarkTheme by mutableStateOf(false)
 }

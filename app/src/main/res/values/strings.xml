@@ -1,4 +1,62 @@
 <resources>
-    <string name="app_name">Swap</string>
     <string name="welcome">Welcome</string>
+    <string name="enter_email">Enter email</string>
+    <string name="enter_password">Enter password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="back_to_sign_in">Back to sign in</string>
+    <string name="welcome_register">Welcome! Register in our application.</string>
+    <string name="chats">Chats</string>
+    <string name="category">Category</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+    <string name="add_item">Add item</string>
+    <string name="enter">Enter</string>
+    <string name="photo">photo</string>
+    <string name="enter_name">Enter name</string>
+    <string name="enter_description">Enter description</string>
+    <string name="select_category">Select category</string>
+
+    <string name="category_electronics">Electronics</string>
+    <string name="category_appliances">Appliances</string>
+    <string name="category_clothing_shoes">Clothing &amp; Shoes</string>
+    <string name="category_toys">Toys</string>
+    <string name="category_cars_motorcycles">Cars &amp; Motorcycles</string>
+    <string name="category_food_drinks">Food &amp; Drinks</string>
+    <string name="category_books">Books</string>
+    <string name="category_stationery">Stationery</string>
+    <string name="category_furniture">Furniture</string>
+    <string name="category_home_garden">Home &amp; Garden</string>
+    <string name="category_beauty_health">Beauty &amp; Health</string>
+    <string name="category_sports_outdoors">Sports &amp; Outdoors</string>
+    <string name="category_pet_supplies">Pet Supplies</string>
+    <string name="category_accessories">Accessories</string>
+    <string name="category_jewelry">Jewelry</string>
+    <string name="category_tools">Tools</string>
+    <string name="category_collectibles">Collectibles</string>
+
+    <string name="exchanges">Exchanges</string>
+    <string name="my_announcements">My Announcements</string>
+    <string name="all_announcements">All Announcements</string>
+    <string name="profile">Profile</string>
+    <string name="themes">Themes</string>
+    <string name="exit">Exit</string>
+
+    <string name="error_fill_title">Filling error</string>
+    <string name="error_fill_text">Please fill in all fields!</string>
+    <string name="close">Close</string>
+
+    <string name="light_theme">Light theme</string>
+    <string name="dark_theme">Dark theme</string>
+
+
+
+
+
+
+
+
+
+
+    <string name="app_name">Swap</string>
 </resources>

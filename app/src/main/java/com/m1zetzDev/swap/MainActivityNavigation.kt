@@ -22,11 +22,11 @@ import com.m1zetzDev.swap.auth.screens.ScreenSignUp
 import com.m1zetzDev.swap.mainAppButNav.AppBottomNavigation
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ChatsViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.EnterEvent
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.HomeAddItemViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.Settings
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.ChatScreen
-
-
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.Themes
 
 
 class MainActivityNavigation : ComponentActivity() {
@@ -43,8 +43,11 @@ class MainActivityNavigation : ComponentActivity() {
 
             val vmSignIn: SignInViewModel = viewModel()
             val vmSignUp: SignUpViewModel = viewModel()
-            val vmSettings: SettingsViewModel = viewModel()
+
+            val vmAddItem: HomeAddItemViewModel = viewModel()
             val vmChats: ChatsViewModel = viewModel()
+            val vmSettings: SettingsViewModel = viewModel()
+
 
             enableEdgeToEdge()
 
@@ -72,7 +75,6 @@ class MainActivityNavigation : ComponentActivity() {
                             )
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
-                                        Log.d("MyLog", "Sign In is Successful!")
                                         navController.navigate("main_window_screen")
                                     } else {
                                         Log.d("MyLog", "Sign In is Failed!")
@@ -104,7 +106,6 @@ class MainActivityNavigation : ComponentActivity() {
                             )
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
-                                        Log.d("MyLog", "Sign Up is Successful!")
                                         navController.navigate("screen_sign_in")
                                     } else {
                                         Log.d("MyLog", "Sign Up is Failed!")
@@ -128,14 +129,17 @@ class MainActivityNavigation : ComponentActivity() {
                     AppBottomNavigation(
                         signOut = { performSignOut() },
                         navController = navController,
-                        vmChats = vmChats
+                        vmChats = vmChats,
+                        vmAddItem = vmAddItem
                     )
                 }
                 composable("settings_bottom_sheet") {
                     Settings(
                         signOut = { performSignOut() },
                         onDismiss = { vmSettings.showBottomSheet = false },
-                        viewModel = vmSettings
+                        viewModel = vmSettings,
+                        navController = navController,
+                        toThemes = { navController.navigate("Themes") }
                     )
                 }
                 composable("chat_screen") {
@@ -148,6 +152,10 @@ class MainActivityNavigation : ComponentActivity() {
 
                     )
                 }
+                composable("themes") {
+                    Themes(vmSettings)
+                }
+
 
             }
         }

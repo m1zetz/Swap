@@ -1,4 +1,5 @@
 package com.m1zetzDev.swap.mainAppButNav
+
 import android.util.Log
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ChatsViewModel
+import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.HomeAddItemViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.SettingsViewModel
 import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavigationViewModel
 
@@ -36,7 +38,12 @@ import com.m1zetzDev.swap.ui.theme.transparent
 
 
 @Composable
-fun AppBottomNavigation(signOut: () -> Unit, navController: NavController, vmChats: ChatsViewModel) {
+fun AppBottomNavigation(
+    signOut: () -> Unit,
+    navController: NavController,
+    vmChats: ChatsViewModel,
+    vmAddItem: HomeAddItemViewModel
+) {
 
     val listItems = listOf(
         BottomItem.myItems_Home,
@@ -69,8 +76,7 @@ fun AppBottomNavigation(signOut: () -> Unit, navController: NavController, vmCha
                         onClick = {
                             if (index == 4) {
                                 vmSettings.showBottomSheet = true
-                            }
-                            else {
+                            } else {
                                 vmBottomNavigation.currentScreenIndex = index
                                 vmSettings.showBottomSheet = false
                             }
@@ -82,13 +88,20 @@ fun AppBottomNavigation(signOut: () -> Unit, navController: NavController, vmCha
                 }
             }
         }) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding), vmBottomNavigation.currentScreenIndex,  navController = navController, vmChats = vmChats)
+        ContentScreen(
+            modifier = Modifier.padding(innerPadding),
+            vmBottomNavigation.currentScreenIndex,
+            navController = navController,
+            vmChats = vmChats,
+            vmAddItem = vmAddItem
+        )
         if (vmSettings.showBottomSheet) {
-            Log.d("", "попал в условие")
             Settings(
                 viewModel = vmSettings,
-                signOut = {signOut()},
-                onDismiss = { vmSettings.showBottomSheet = false}
+                signOut = { signOut() },
+                onDismiss = { vmSettings.showBottomSheet = false },
+                navController = navController,
+                toThemes = {navController.navigate("themes")}
             )
         }
     }
@@ -97,10 +110,16 @@ fun AppBottomNavigation(signOut: () -> Unit, navController: NavController, vmCha
 
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int, navController: NavController, vmChats: ChatsViewModel) {
+fun ContentScreen(
+    modifier: Modifier = Modifier,
+    selectedIndex: Int,
+    navController: NavController,
+    vmChats: ChatsViewModel,
+    vmAddItem: HomeAddItemViewModel
+) {
     when (selectedIndex) {
-        0 -> HomePage()
-        1 -> Chats(navController = navController , vmChats)
+        0 -> HomePage(vmAddItem)
+        1 -> Chats(navController = navController, vmChats)
         2 -> Ribbon()
         3 -> Exchanges()
     }

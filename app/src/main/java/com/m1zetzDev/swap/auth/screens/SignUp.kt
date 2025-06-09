@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,7 +79,7 @@ fun ScreenSignUp(
             ) {
 
                 Text(
-                    "Welcome! Register in our application.",
+                    stringResource(R.string.welcome_register),
                     color = whiteForUi,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
@@ -97,7 +98,7 @@ fun ScreenSignUp(
                     ),
                     label = {
                         Text(
-                            "Enter email",
+                            stringResource(R.string.enter_email),
                             color = backgroundColorPurple1,
                             fontWeight = FontWeight.Bold
                         )
@@ -118,7 +119,7 @@ fun ScreenSignUp(
                     ),
                     label = {
                         Text(
-                            "Enter password",
+                            stringResource(R.string.enter_password),
                             color = backgroundColorPurple1,
                             fontWeight = FontWeight.Bold
                         )
@@ -136,7 +137,7 @@ fun ScreenSignUp(
                 )
                 {
                     Text(
-                        "Sign Up",
+                        stringResource(R.string.sign_up),
                         textAlign = TextAlign.Center,
                         color = backgroundColorPurple1,
                         fontWeight = FontWeight.Bold
@@ -152,7 +153,7 @@ fun ScreenSignUp(
                 )
                 {
                     Text(
-                        "Back to Sign In",
+                        stringResource(R.string.back_to_sign_in),
                         textAlign = TextAlign.Center,
                         color = backgroundColorPurple1,
                         fontWeight = FontWeight.Bold
@@ -164,16 +165,4 @@ fun ScreenSignUp(
         }
 
     }
-}
-
-
-private fun signUp(firebaseAuth: FirebaseAuth, email: String, password: String) {
-    firebaseAuth.createUserWithEmailAndPassword(email, password)
-        .addOnCompleteListener {
-            if (it.isSuccessful) {
-                Log.d("MyLog", "Sign Up is Successful!")
-            } else {
-                Log.d("MyLog", "Sign Up is Failed!")
-            }
-        }
 }

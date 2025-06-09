@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -86,7 +87,7 @@ fun Chats(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Chats", fontSize = 22.sp) },
+                    title = { Text(stringResource(R.string.chats), fontSize = 22.sp) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorPurple1,
                         titleContentColor = whiteForUi
@@ -225,7 +226,6 @@ fun ChatScreen(
         }
     }
     if (vmChats.otherEmail.value.isBlank()) {
-        Log.e("ChatScreen", "otherEmail is blank")
         return
     }
 

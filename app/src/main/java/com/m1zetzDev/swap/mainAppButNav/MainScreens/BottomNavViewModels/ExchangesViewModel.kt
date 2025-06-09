@@ -34,7 +34,6 @@ class ExchangesViewModel : ViewModel() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     listOfCards = task.result.toObjects(Exchanges::class.java)
-                    Log.d("msg", listOfCards.toString())
                 } else {
                     Log.d("msg", "данные не получены")
                 }
@@ -46,7 +45,6 @@ class ExchangesViewModel : ViewModel() {
         Firebase.firestore.collection("successfulExchanges")
             .add(exchange)
             .addOnSuccessListener {
-                Log.d("Firebase", "Обмен успешно сохранён")
             }
             .addOnFailureListener {
                 Log.e("Firebase", "Ошибка при сохранении обмена", it)

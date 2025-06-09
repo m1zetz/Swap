@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,7 @@ fun Exchanges() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Exchanges", fontSize = 22.sp) },
+                    title = { Text(stringResource(R.string.exchanges), fontSize = 22.sp) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorPurple1,
                         titleContentColor = whiteForUi
@@ -150,7 +151,7 @@ fun Exchanges() {
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = "Category: ${exchange.acceptedDescription}",
+                                                text = "${stringResource(R.string.category)}: ${exchange.acceptedDescription}",
                                                 color = backgroundColorPurple3,
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold
@@ -249,7 +250,7 @@ fun Exchanges() {
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = "Category: ${exchange.categoryOther}",
+                                                text = "${stringResource(R.string.category)}: ${exchange.categoryOther}",
                                                 color = backgroundColorPurple3,
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold
@@ -273,7 +274,7 @@ fun Exchanges() {
                                         ),
                                         modifier = Modifier.padding(5.dp)
                                     ) {
-                                        Text("Accept", textAlign = TextAlign.Center)
+                                        Text(stringResource(R.string.accept), textAlign = TextAlign.Center)
                                     }
                                     Button(
                                         onClick = {}, colors = ButtonColors(
@@ -284,7 +285,7 @@ fun Exchanges() {
                                         ),
                                         modifier = Modifier.padding(5.dp)
                                     ) {
-                                        Text("Reject", textAlign = TextAlign.Center)
+                                        Text(stringResource(R.string.reject), textAlign = TextAlign.Center)
                                     }
                                 }
                             }

@@ -107,7 +107,7 @@ fun ScreenSignIn(
                     ),
                     label = {
                         Text(
-                            "Enter email",
+                            stringResource(R.string.enter_email),
                             color = backgroundColorPurple1,
                             fontWeight = FontWeight.Bold
                         )
@@ -128,14 +128,13 @@ fun ScreenSignIn(
                     ),
                     label = {
                         Text(
-                            "Enter password",
+                            stringResource(R.string.enter_password),
                             color = backgroundColorPurple1,
                             fontWeight = FontWeight.Bold
                         )
                     },
                     shape = RoundedCornerShape(25.dp)
                 )
-
 
 
                 Button(
@@ -146,7 +145,7 @@ fun ScreenSignIn(
                 )
                 {
                     Text(
-                        "Sign In",
+                        stringResource(R.string.sign_in),
                         textAlign = TextAlign.Center,
                         color = backgroundColorPurple1,
                         fontWeight = FontWeight.Bold
@@ -162,7 +161,7 @@ fun ScreenSignIn(
                 )
                 {
                     Text(
-                        "Sign Up",
+                        stringResource(R.string.sign_up),
                         textAlign = TextAlign.Center,
                         color = backgroundColorPurple1,
                         fontWeight = FontWeight.Bold
@@ -174,8 +173,6 @@ fun ScreenSignIn(
 
 
     }
-    Log.d("mylog", "user email: ${auth5.currentUser?.email}")
-    Log.d("mylog", "user id: ${auth5.currentUser?.uid}")
 }
 
 

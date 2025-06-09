@@ -70,6 +70,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -95,7 +96,6 @@ import com.m1zetzDev.swap.ui.theme.whiteForUi
 @Composable
 fun Ribbon() {
     val vmRibbon: RibbonViewModel = viewModel()
-    val cv = LocalContext.current.contentResolver
     LaunchedEffect(Unit) {
         vmRibbon.getData()
     }
@@ -103,7 +103,7 @@ fun Ribbon() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("All Announcements", fontSize = 22.sp) },
+                    title = { Text(stringResource(R.string.all_announcements), fontSize = 22.sp) },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = backgroundColorPurple1,
                         titleContentColor = whiteForUi
@@ -143,10 +143,11 @@ fun Ribbon() {
 
                                             vmRibbon.emailOther = cards.userEmail
                                             vmRibbon.uriOther = cards.imageUri
-                                            Log.d("msg", "name: ${vmRibbon.messageName}")
+
 
 
                                             vmRibbon.removeCard(cards)
+                                            vmRibbon.getData()
 
                                             vmRibbon.stateOfBotttomSheet = true
 
@@ -163,11 +164,9 @@ fun Ribbon() {
                                     DismissDirection.EndToStart,
                                 ),
                                 background = {
-                                    val direction =
-                                        dismissState.dismissDirection ?: return@SwipeToDismiss
                                     val color by animateColorAsState(
                                         targetValue = when (dismissState.targetValue) {
-                                            DismissValue.Default -> bluePink
+                                            DismissValue.Default -> whiteForUi
                                             DismissValue.DismissedToStart -> blue
                                             else -> whiteForUi
                                         }
@@ -188,7 +187,7 @@ fun Ribbon() {
                                     ) {
                                         Icon(
                                             icon,
-                                            contentDescription = "Icon",
+                                            contentDescription = "",
                                             modifier = Modifier.scale(scale),
                                             tint = whiteForUi
                                         )
@@ -256,7 +255,7 @@ fun Ribbon() {
                                                 )
                                                 //category
                                                 Text(
-                                                    text = "Category: ${cards.category}",
+                                                    text = "${stringResource(R.string.category)}: ${cards.category}",
                                                     modifier = Modifier,
                                                     color = backgroundColorPurple3,
                                                     fontSize = 18.sp,
@@ -319,7 +318,6 @@ fun ChooseAd(
 
     val sheetState = rememberModalBottomSheetState()
 
-    val cv = LocalContext.current.contentResolver
     if (!state) return
     LaunchedEffect(Unit) {
         vmRibbon.getMyData()
@@ -412,7 +410,7 @@ fun ChooseAd(
                                 )
                                 //category
                                 Text(
-                                    text = "Category: ${cards.category}",
+                                    text = "${stringResource(R.string.category)}: ${cards.category}",
                                     modifier = Modifier,
                                     color = backgroundColorPurple3,
                                     fontSize = 18.sp,
