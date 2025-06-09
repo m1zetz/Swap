@@ -11,10 +11,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.m1zetzDev.swap.auth.AuthEvent
 import com.m1zetzDev.swap.common.TextField
 
 const val SUCCESSFUL_EXCHANGES = "successfulExchanges"
@@ -24,29 +22,29 @@ class ChatsViewModel : ViewModel() {
 
     val fireBase = Firebase.firestore
 
-    var currentEmail: String? = null
+    var currentId: String? = null
 
     var messageText by mutableStateOf(TextField())
-    val otherEmail = mutableStateOf("")
+    val otherId = mutableStateOf("")
     val otherUri = mutableStateOf("")
 
-    fun selectUserForChat(email: String, uri: String) {
-        otherEmail.value = email
+    fun selectUserForChat(uid: String, uri: String) {
+        otherId.value = uid
         otherUri.value = uri
     }
 
-    fun updateCurrentEmail() {
-        currentEmail = Firebase.auth.currentUser?.email
+    fun updateCurrentId() {
+        currentId = Firebase.auth.currentUser?.uid
     }
 
-    fun createChatId(currentEmail: String, otherEmail: String) : String{
-        val modifiedCurrentEmail = currentEmail.replace(".","_")
-        val modifiedCOtherEmail = otherEmail.replace(".","_")
-        val sorted = listOf(modifiedCurrentEmail, modifiedCOtherEmail).sorted()
+    fun createChatId(currentId: String, otherId: String) : String{
+        val modifiedCurrentId = currentId.replace(".","_")
+        val modifiedCOtherId = otherId.replace(".","_")
+        val sorted = listOf(modifiedCurrentId, modifiedCOtherId).sorted()
         return "${sorted[0]}_${sorted[1]}"
     }
 
-    fun sendMessage(currentEmail: String, otherEmail: String){
+    fun sendMessage(currentId: String, otherId: String){
         val message = messageText.value.trim()
         if (message.isBlank()){
             return
@@ -54,10 +52,10 @@ class ChatsViewModel : ViewModel() {
 
         messageText = messageText.copy(value = "")
 
-        val chatId = createChatId(currentEmail, otherEmail)
+        val chatId = createChatId(currentId, otherId)
 
         val messageData = mapOf(
-            "senderId" to currentEmail,
+            "senderId" to currentId,
             "text" to message,
             "timestamp" to System.currentTimeMillis()
         )
@@ -71,8 +69,8 @@ class ChatsViewModel : ViewModel() {
 
     val messagesList = mutableStateListOf<ChatMessage>()
 
-    fun getMessages(currentEmail: String, otherEmail: String){
-        val chatId = createChatId(currentEmail, otherEmail)
+    fun getMessages(currentId: String, otherId: String){
+        val chatId = createChatId(currentId, otherId)
 
         database.getReference("chats").child(chatId).child("messages")
             .addValueEventListener(object : ValueEventListener {
@@ -116,18 +114,18 @@ class ChatsViewModel : ViewModel() {
 
 
     fun getAllMySuccessfulExchanges() {
-        val myEmail = Firebase.auth.currentUser?.email ?: return
+        val myId = Firebase.auth.currentUser?.uid ?: return
 
         val allResults = mutableListOf<ExchangesViewModel.Exchanges>()
 
         fireBase.collection(SUCCESSFUL_EXCHANGES)
-            .whereEqualTo("acceptedEmail", myEmail)
+            .whereEqualTo("acceptedId", myId)
             .get()
             .addOnSuccessListener { acceptedResult ->
                 allResults.addAll(acceptedResult.toObjects(ExchangesViewModel.Exchanges::class.java))
 
                 fireBase.collection(SUCCESSFUL_EXCHANGES)
-                    .whereEqualTo("userEmailOther", myEmail)
+                    .whereEqualTo("userIdOther", myId)
                     .get()
                     .addOnSuccessListener { otherResult ->
                         allResults.addAll(otherResult.toObjects(ExchangesViewModel.Exchanges::class.java))
@@ -136,11 +134,11 @@ class ChatsViewModel : ViewModel() {
                         listOfCardsUsers.addAll(allResults)
                     }
                     .addOnFailureListener {
-                        Log.d("msg", "Ошибка при получении userEmailOther: $it")
+                        Log.d("msg", "Ошибка при получении userIdOther: $it")
                     }
             }
             .addOnFailureListener {
-                Log.d("msg", "Ошибка при получении acceptedEmail: $it")
+                Log.d("msg", "Ошибка при получении acceptedId: $it")
             }
     }
 

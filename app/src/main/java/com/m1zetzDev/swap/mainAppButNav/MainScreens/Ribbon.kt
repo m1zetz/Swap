@@ -141,7 +141,7 @@ fun Ribbon() {
                                             vmRibbon.descriptionOther = cards.description
                                             vmRibbon.categoryOther = cards.category
 
-                                            vmRibbon.emailOther = cards.userEmail
+                                            vmRibbon.uidOther = cards.user_id
                                             vmRibbon.uriOther = cards.imageUri
 
 

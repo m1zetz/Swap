@@ -151,13 +151,13 @@ fun Exchanges() {
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = "${stringResource(R.string.category)}: ${exchange.acceptedDescription}",
+                                                text = "${stringResource(R.string.category)}: ${exchange.acceptedCategory}",
                                                 color = backgroundColorPurple3,
                                                 fontSize = 18.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
                                             Text(
-                                                text = exchange.acceptedCategory.replaceFirstChar { it.uppercaseChar() },
+                                                text = exchange.acceptedDescription.replaceFirstChar { it.uppercaseChar() },
                                                 color = backgroundColorPurple3,
                                                 fontSize = 15.sp
                                             )

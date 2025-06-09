@@ -16,21 +16,10 @@ class ExchangesViewModel : ViewModel() {
     val fireBase = Firebase.firestore
     var listOfCards by mutableStateOf(emptyList<Exchanges>())
 
-    val acceptedEmail by mutableStateOf("")
-    val acceptedName by mutableStateOf("")
-    val acceptedDescription by mutableStateOf("")
-    val acceptedCategory by mutableStateOf("")
-    val acceptedUri by mutableStateOf("")
-
-    val userEmailOther by mutableStateOf("")
-    val nameOther by mutableStateOf("")
-    val descriptionOther by mutableStateOf("")
-    val categoryOther by mutableStateOf("")
-    val imageUriOther by mutableStateOf("")
 
     fun getMyData() {
-        val myEmail = Firebase.auth.currentUser?.email
-        fireBase.collection(CARDS_IN_EXCHANGE).whereEqualTo("userEmailOther", myEmail).get()
+        val myId = Firebase.auth.currentUser?.uid
+        fireBase.collection(CARDS_IN_EXCHANGE).whereEqualTo("userIdOther", myId).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     listOfCards = task.result.toObjects(Exchanges::class.java)
@@ -41,7 +30,6 @@ class ExchangesViewModel : ViewModel() {
     }
 
     fun acceptExchange(exchange: Exchanges) {
-
         Firebase.firestore.collection("successfulExchanges")
             .add(exchange)
             .addOnSuccessListener {
@@ -52,21 +40,14 @@ class ExchangesViewModel : ViewModel() {
     }
 
 
-    data class ChatMessage(
-        val senderEmail: String = "",
-        val text: String = "",
-        val timestamp: Long = System.currentTimeMillis()
-    )
-
-
     data class Exchanges(
-        val acceptedEmail: String = "",
+        val acceptedId: String = "",
         val acceptedName: String = "",
         val acceptedDescription: String = "",
         val acceptedCategory: String = "",
         val acceptedUri: String = "",
 
-        val userEmailOther: String = "",
+        val userIdOther: String = "",
         val nameOther: String = "",
         val descriptionOther: String = "",
         val categoryOther: String = "",

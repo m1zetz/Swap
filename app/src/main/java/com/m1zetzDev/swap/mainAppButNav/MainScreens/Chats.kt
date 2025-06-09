@@ -2,7 +2,6 @@ package com.m1zetzDev.swap.mainAppButNav.MainScreens
 
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,7 +38,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,7 +50,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.firebase.auth.ktx.auth
@@ -63,10 +60,6 @@ import com.m1zetzDev.swap.mainAppButNav.MainScreens.BottomNavViewModels.ChatsVie
 import com.m1zetzDev.swap.ui.theme.backgroundColorPurple1
 import com.m1zetzDev.swap.ui.theme.lightBlue
 import com.m1zetzDev.swap.ui.theme.whiteForUi
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +69,7 @@ fun Chats(
     vmChats: ChatsViewModel
 ) {
 
-    vmChats.updateCurrentEmail()
+    vmChats.updateCurrentId()
     LaunchedEffect(Unit) {
         vmChats.getAllMySuccessfulExchanges()
     }
@@ -113,14 +106,14 @@ fun Chats(
 
                         items(vmChats.listOfCardsUsers) { cards ->
 
-                            val currentEmail = Firebase.auth.currentUser?.email
-                            val otherUserEmail = if (cards.acceptedEmail == currentEmail) {
-                                cards.userEmailOther
+                            val currentId = Firebase.auth.currentUser?.uid
+                            val otherUserId = if (cards.acceptedId == currentId) {
+                                cards.userIdOther
                             } else {
-                                cards.acceptedEmail
+                                cards.acceptedId
                             }
 
-                            val imageBase64 = if (cards.acceptedEmail == currentEmail) {
+                            val imageBase64 = if (cards.acceptedId == currentId) {
                                 cards.imageUriOther
                             } else {
                                 cards.acceptedUri
@@ -138,8 +131,8 @@ fun Chats(
                                     .padding(10.dp)
                                     .height(height = 100.dp)
                                     .clickable {
-                                        vmChats.getMessages(vmChats.currentEmail!!, otherUserEmail)
-                                        vmChats.selectUserForChat(otherUserEmail, imageBase64)
+                                        vmChats.getMessages(vmChats.currentId!!, otherUserId)
+                                        vmChats.selectUserForChat(otherUserId, imageBase64)
                                         navController.navigate("chat_screen")
                                     }
                             ) {
@@ -186,7 +179,7 @@ fun Chats(
                                     ) {
                                         // name
                                         Text(
-                                            text = otherUserEmail.replaceFirstChar { it.uppercaseChar() },
+                                            text = otherUserId.replaceFirstChar { it.uppercaseChar() },
                                             modifier = Modifier,
                                             color = backgroundColorPurple1,
                                             fontSize = 27.sp,
@@ -224,14 +217,14 @@ fun ChatScreen(
             listState.animateScrollToItem(messages.lastIndex)
         }
     }
-    if (vmChats.otherEmail.value.isBlank()) {
+    if (vmChats.otherId.value.isBlank()) {
         return
     }
 
     Column(Modifier.background(lightBlue)) {
 
         //ебучая карточка
-        cardChat(vmChats.otherUri.value, vmChats.otherEmail.value)
+        cardChat(vmChats.otherUri.value, vmChats.otherId.value)
 
 
         Box(Modifier.fillMaxSize()) {
@@ -242,7 +235,7 @@ fun ChatScreen(
                 state = listState
             ) {
                 items(vmChats.messagesList) { messages ->
-                    val isMyMessage = messages.senderId == vmChats.currentEmail
+                    val isMyMessage = messages.senderId == vmChats.currentId
 
                     Row(horizontalArrangement = if (isMyMessage) Arrangement.End else Arrangement.Start,
                         modifier = Modifier.padding(8.dp).fillMaxWidth()) {
@@ -265,7 +258,6 @@ fun ChatScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                val currentEmail = Firebase.auth.currentUser?.email
 
                 Row {
                     //ВВОД СООБЩЕНИЯ
@@ -276,7 +268,7 @@ fun ChatScreen(
                             .weight(1f)
                             .padding(bottom = IntPixelsToDp(navBarHeight)),
                         shape = RectangleShape)
-                    Button(onClick = {vmChats.sendMessage(vmChats.currentEmail.toString(), vmChats.otherEmail.value)
+                    Button(onClick = {vmChats.sendMessage(vmChats.currentId.toString(), vmChats.otherId.value)
                     }) {
                         Image(Icons.Default.PlayArrow, contentDescription = "", Modifier.size(56.dp))
                     }
@@ -295,7 +287,7 @@ fun IntPixelsToDp(px: Int): Dp {
 }
 
 @Composable
-fun cardChat(imageBase64:String, otherUserEmail: String){
+fun cardChat(imageBase64:String, otherUserId: String){
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -348,7 +340,7 @@ fun cardChat(imageBase64:String, otherUserEmail: String){
             ) {
                 // name
                 Text(
-                    text = otherUserEmail,
+                    text = otherUserId,
                     modifier = Modifier,
                     color = backgroundColorPurple1,
                     fontSize = 27.sp,

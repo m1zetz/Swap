@@ -88,16 +88,16 @@ class HomeAddItemViewModel : ViewModel() {
 
         val uid = Firebase.auth.currentUser?.uid ?: return
         val uri = messageUri
-        val userEmail = Firebase.auth.currentUser?.email
+
 
         if (uri == null) {
             Log.e("sendData", "Image URI is null. Item not sent.")
             return
         }
+
         fireBase.collection(CARDS_COLLECTION).document().set(
             Cards(
                 user_id = uid,
-                userEmail = userEmail.toString(),
                 name = messageName.value,
                 description = messageDescription.value,
                 category = messageCategory.value,
@@ -128,7 +128,6 @@ class HomeAddItemViewModel : ViewModel() {
 
 
 data class Cards(
-    val userEmail: String = "",
     val user_id: String = "",
     val name: String = "",
     val description: String = "",

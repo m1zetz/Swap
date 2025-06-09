@@ -22,8 +22,9 @@ class RibbonViewModel : ViewModel() {
 
     val fireBase = Firebase.firestore
 
-    var emailOther by mutableStateOf("")
+
     var uriOther by mutableStateOf("")
+    var uidOther by mutableStateOf("")
     var nameOther by mutableStateOf("")
     var descriptionOther by mutableStateOf("")
     var categoryOther by mutableStateOf("")
@@ -33,7 +34,7 @@ class RibbonViewModel : ViewModel() {
     var listOfMyCards by mutableStateOf(emptyList<Cards>())
 
     fun getMyData() {
-        val uid = Firebase.auth.currentUser?.uid ?: return
+        val uid = Firebase.auth.currentUser?.uid
         fireBase.collection(CARDS_COLLECTION).whereEqualTo("user_id", uid).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -71,18 +72,17 @@ class RibbonViewModel : ViewModel() {
         uri: String,
     ) {
 
-        val acceptedUserEmail = Firebase.auth.currentUser?.email
-        val userEmailOther = emailOther
+        val acceptedUserId = Firebase.auth.currentUser?.uid
 
         fireBase.collection(CARDS_TO_EXCHANGE).document().set(
             ToExchange(
-                acceptedEmail = acceptedUserEmail.toString(),
+                acceptedId = acceptedUserId.toString(),
                 acceptedName = name,
                 acceptedDescription = description,
                 acceptedCategory = category,
                 acceptedUri = uri,
 
-                userEmailOther = userEmailOther,
+                userIdOther = uidOther,
                 nameOther = nameOther,
                 descriptionOther = descriptionOther,
                 categoryOther = categoryOther,
@@ -93,13 +93,13 @@ class RibbonViewModel : ViewModel() {
 }
 
 data class ToExchange(
-    val acceptedEmail: String = "",
+    val acceptedId: String = "",
     val acceptedName: String = "",
     val acceptedDescription: String = "",
     val acceptedCategory: String = "",
     val acceptedUri: String = "",
 
-    val userEmailOther: String = "",
+    val userIdOther: String = "",
     val nameOther: String = "",
     val descriptionOther: String = "",
     val categoryOther: String = "",
